@@ -1,10 +1,13 @@
 package com.example.oliverh.bakerapp.ui.selectrecipe;
 
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment;
+
+import timber.log.Timber;
 
 public class SelectRecipe extends AppCompatActivity {
 
@@ -17,5 +20,7 @@ public class SelectRecipe extends AppCompatActivity {
                     .replace(R.id.container, SelectRecipeFragment.newInstance())
                     .commitNow();
         }
+
+        Timber.plant(new Timber.DebugTree());
     }
 }
