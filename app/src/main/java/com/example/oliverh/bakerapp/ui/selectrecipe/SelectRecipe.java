@@ -1,8 +1,9 @@
-package com.example.oliverh.bakerapp;
+package com.example.oliverh.bakerapp.ui.selectrecipe;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment;
 
 public class SelectRecipe extends AppCompatActivity {
