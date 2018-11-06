@@ -9,7 +9,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class Recipe {
 
     @PrimaryKey
-    @ColumnInfo(name = "recipe_id")
+    @ColumnInfo(name = "id")
     private int mId;
 
     @ColumnInfo(name = "name")
