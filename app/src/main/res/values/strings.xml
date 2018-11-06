@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BakerApp</string>
+    <string name="image_of_recipe">Image of recipe</string>
+    <string name="recipe_name">Recipe Name :</string>
+    <string name="serving_size">Serving Size :</string>
+    <string name="TEST_SERVING_SIZE">3</string>
 </resources>
