@@ -9,55 +9,54 @@ import android.arch.persistence.room.PrimaryKey;
 public class Recipe {
 
     @PrimaryKey
-    @ColumnInfo(name = "id")
-    private int mId;
+    private int id;
 
     @ColumnInfo(name = "name")
-    private String mRecipeName;
+    private String recipeName;
 
     @ColumnInfo(name = "servings")
-    private int mServings;
+    private int servings;
 
     @ColumnInfo(name = "image")
-    private String mImageURL;
+    private String imageURL;
 
     public Recipe(int mId, String mRecipeName, int mServings, String mImageURL) {
-        this.mId = mId;
-        this.mRecipeName = mRecipeName;
-        this.mServings = mServings;
-        this.mImageURL = mImageURL;
+        this.id = mId;
+        this.recipeName = mRecipeName;
+        this.servings = mServings;
+        this.imageURL = mImageURL;
     }
 
     public int getId() {
-        return mId;
+        return id;
     }
 
     public void setId(int mId) {
-        this.mId = mId;
+        this.id = mId;
     }
 
     public String getRecipeName() {
-        return mRecipeName;
+        return recipeName;
     }
 
     public void setRecipeName(String mRecipeName) {
-        this.mRecipeName = mRecipeName;
+        this.recipeName = mRecipeName;
     }
 
     public int getServings() {
-        return mServings;
+        return servings;
     }
 
     public void setServings(int mServings) {
-        this.mServings = mServings;
+        this.servings = mServings;
     }
 
     public String getImageURL() {
-        return mImageURL;
+        return imageURL;
     }
 
     public void setImageURL(String mImageURL) {
-        this.mImageURL = mImageURL;
+        this.imageURL = mImageURL;
     }
 
 
