@@ -23,7 +23,7 @@ public class SelectRecipeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.select_recipe_fragment, container, false);
+        return inflater.inflate(R.layout.recipe_cardview_item, container, false);
     }
 
     @Override
