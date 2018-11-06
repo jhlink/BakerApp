@@ -15,8 +15,8 @@ public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase ourInstance;
 
     public abstract RecipeDao recipeDao();
-    public abstract RecipeIngredient recipeIngredientDao();
-    public abstract RecipeStep recipeStepDao();
+    public abstract RecipeIngredientDao recipeIngredientDao();
+    public abstract RecipeStepDao recipeStepDao();
 
     public static AppDatabase getInstance(final Context context) {
         if (ourInstance == null) {
