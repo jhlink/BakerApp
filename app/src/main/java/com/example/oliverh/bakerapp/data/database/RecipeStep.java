@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.squareup.moshi.Json;
+
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = Recipe.class,
@@ -23,10 +25,11 @@ public class RecipeStep {
     //      The step ids found in the raw JSON file imply that the order of the recipe instructions
     //      and the id progression are the same.
     @ColumnInfo(name = "recipe_step_index")
+    @Json(name = "id")
     private int stepIndex;
 
     @ColumnInfo(name = "recipe_id")
-    private int recipeId;
+    private transient int recipeId;
 
     @ColumnInfo(name = "short_description")
     private String shortDescription;
@@ -35,9 +38,11 @@ public class RecipeStep {
     private int description;
 
     @ColumnInfo(name = "video_url")
+    @Json(name = "videoURL")
     private String videoUrl;
 
     @ColumnInfo(name = "thumbnail_url")
+    @Json(name = "thumbnailURL")
     private String thumbnailUrl;
 
 
