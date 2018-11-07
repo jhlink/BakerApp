@@ -3,7 +3,10 @@ package com.example.oliverh.bakerapp.data.database;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+
+import java.util.Locale;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
@@ -23,12 +26,16 @@ public class RecipeIngredient {
     private transient int recipeId;
 
     private String ingredient;
-    private int quantity;
+    private double quantity;
 
     @ColumnInfo(name = "measurement")
     private String measure;
 
-    public RecipeIngredient(int recipeIngredientId, int recipeId, int quantity, String measure, String ingredient) {
+    @Ignore
+    @SuppressWarnings("unused")
+    public RecipeIngredient() {}
+
+    public RecipeIngredient(int recipeIngredientId, int recipeId, double quantity, String measure, String ingredient) {
         this.recipeIngredientId = recipeIngredientId;
         this.recipeId = recipeId;
         this.quantity = quantity;
@@ -52,11 +59,11 @@ public class RecipeIngredient {
         this.recipeId = recipeId;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int mQuantity) {
+    public void setQuantity(double mQuantity) {
         this.quantity = mQuantity;
     }
 
@@ -74,5 +81,11 @@ public class RecipeIngredient {
 
     public void setIngredient(String mIngredient) {
         this.ingredient = mIngredient;
+    }
+
+    @Override
+    public String toString() {
+        String compiled = String.format(Locale.ENGLISH, "Ingredient: %s, Quantity: %.2f, Measurement: %s", ingredient, quantity, measure);
+        return compiled;
     }
 }
