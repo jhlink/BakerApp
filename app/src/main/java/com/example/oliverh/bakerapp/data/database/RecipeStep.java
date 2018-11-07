@@ -9,6 +9,8 @@ import android.arch.persistence.room.PrimaryKey;
 import com.example.oliverh.bakerapp.Constants;
 import com.squareup.moshi.Json;
 
+import java.util.Locale;
+
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = @ForeignKey(entity = Recipe.class,
@@ -119,5 +121,12 @@ public class RecipeStep {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    @Override
+    public String toString() {
+        String compiled = String.format(Locale.ENGLISH, "Step #: %s, S_Desc: %s, Desc: %s, videoUrl: %s, thumbnailUrl: %s",
+                stepIndex, shortDescription, description, videoUrl, thumbnailUrl);
+        return compiled;
     }
 }
