@@ -37,7 +37,7 @@ public class RecipeStep {
     private String shortDescription;
 
     @ColumnInfo(name = "description")
-    private int description;
+    private String description;
 
     @ColumnInfo(name = "video_url")
     @Json(name = "videoURL")
