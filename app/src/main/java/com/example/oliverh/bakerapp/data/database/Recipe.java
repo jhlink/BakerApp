@@ -20,11 +20,11 @@ public class Recipe {
     @ColumnInfo(name = "image")
     private String imageURL;
 
-    public Recipe(int mId, String mRecipeName, int mServings, String mImageURL) {
-        this.id = mId;
-        this.recipeName = mRecipeName;
-        this.servings = mServings;
-        this.imageURL = mImageURL;
+    public Recipe(int id, String recipeName, int servings, String imageURL) {
+        this.id = id;
+        this.recipeName = recipeName;
+        this.servings = servings;
+        this.imageURL = imageURL;
     }
 
     public int getId() {

@@ -41,14 +41,14 @@ public class RecipeStep {
     private String thumbnailUrl;
 
 
-    public RecipeStep(int mRecipeStepId, int mStepIndex, int mRecipeId, String mShortDescription, int mDescription, String mVideoUrl, String mThumbnailUrl) {
-        this.recipeStepId = mRecipeStepId;
-        this.stepIndex = mStepIndex;
-        this.recipeId = mRecipeId;
-        this.shortDescription = mShortDescription;
-        this.description = mDescription;
-        this.videoUrl = mVideoUrl;
-        this.thumbnailUrl = mThumbnailUrl;
+    public RecipeStep(int recipeStepId, int stepIndex, int recipeId, String shortDescription, int description, String videoUrl, String thumbnailUrl) {
+        this.recipeStepId = recipeStepId;
+        this.stepIndex = stepIndex;
+        this.recipeId = recipeId;
+        this.shortDescription = shortDescription;
+        this.description = description;
+        this.videoUrl = videoUrl;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public int getRecipeStepId() {
