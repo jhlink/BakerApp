@@ -8,12 +8,18 @@ import com.example.oliverh.bakerapp.AppExecutors;
 import com.example.oliverh.bakerapp.data.database.AppDatabase;
 import com.example.oliverh.bakerapp.data.database.Recipe;
 import com.example.oliverh.bakerapp.data.database.RecipeDao;
+import com.example.oliverh.bakerapp.data.database.RecipeIngredient;
 import com.example.oliverh.bakerapp.data.database.RecipeIngredientDao;
+import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.database.RecipeStepDao;
 import com.example.oliverh.bakerapp.data.network.utils.RecipeNetworkAPI;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,12 +53,18 @@ public class RecipeRepository {
 
     public void getRecipeListData(final Context context) {
         Timber.d("Execute API request for Recipe List");
+
+        // TODO: Test recipeRequest using IdlingResource in Espresso.
+        //String test = context.getString(R.string.test_json_recipe_list);
+        //Timber.d("Result -- %s : ", test);
+
         Call recipeListCall = RecipeNetworkAPI.getRecipeListDump(context);
-        getData(recipeListCall, Recipe.class);
+        getData(recipeListCall);
     }
 
-    private void getData(final Call apiCall, final Type targetDataType) {
+    private void getData(final Call apiCall) {
         final MutableLiveData<Recipe> recipeApiResponse = new MutableLiveData<>();
+
 
         AppExecutors.getInstance().networkIO().execute(new Runnable() {
             @Override
@@ -66,7 +78,10 @@ public class RecipeRepository {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (response.isSuccessful()) {
-                            Timber.d("-- API Request[Success]: %s", response.body().string());
+                            Timber.d("-- API Request[Success]: %s", response.body().toString());
+
+                            final List<Recipe> parsedData = jsonParser(response.body().toString());
+                            printRecipeList(parsedData);
                         }
                     }
                 });
@@ -75,5 +90,44 @@ public class RecipeRepository {
     }
 
 
+    private List<Recipe> jsonParser(String jsonResponse) throws IOException {
+        Moshi moshi = new Moshi.Builder().build();
+        JsonAdapter<RecipeIngredient> recipeIngredientJsonAdapter = moshi.adapter(RecipeIngredient.class);
+        JsonAdapter<RecipeStep> recipeStepJsonAdapter = moshi.adapter(RecipeStep.class);
+        JsonAdapter<Recipe> recipeJsonAdapter = moshi.adapter(Recipe.class);
 
+        moshi = moshi.newBuilder()
+                .add(RecipeIngredient.class, recipeIngredientJsonAdapter)
+                .add(RecipeStep.class, recipeStepJsonAdapter)
+                .add(Recipe.class, recipeJsonAdapter)
+            .build();
+
+        Type recipeListType = Types.newParameterizedType(List.class, Recipe.class);
+        JsonAdapter<List<Recipe>> jsonAdapter = moshi.adapter(recipeListType);
+
+        List<Recipe> recipes = jsonAdapter.fromJson(jsonResponse);
+        printRecipeList(recipes);
+
+        return recipes;
+    }
+
+    private void printRecipeList( List<Recipe> recipeList ) {
+        if (recipeList.isEmpty()) {
+            return;
+        }
+        for (Recipe element : recipeList) {
+            Timber.d(element.toString());
+            printObjectList(element.getIngredients());
+            printObjectList(element.getSteps());
+        }
+    }
+
+    private void printObjectList ( List<?> slist ) {
+        if (slist.isEmpty()) {
+            return;
+        }
+        for (Object element : slist) {
+            Timber.d(element.toString());
+        }
+    }
 }
