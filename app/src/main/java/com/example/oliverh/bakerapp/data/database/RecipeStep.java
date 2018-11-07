@@ -55,7 +55,7 @@ public class RecipeStep {
     @Ignore
     public RecipeStep() {}
 
-    public RecipeStep(int recipeStepId, int stepIndex, int recipeId, String shortDescription, int description, String videoUrl, String thumbnailUrl) {
+    public RecipeStep(int recipeStepId, int stepIndex, int recipeId, String shortDescription, String description, String videoUrl, String thumbnailUrl) {
         this.recipeStepId = recipeStepId;
         this.stepIndex = stepIndex;
         this.recipeId = recipeId;
@@ -97,11 +97,11 @@ public class RecipeStep {
         this.shortDescription = shortDescription;
     }
 
-    public int getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(int description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
