@@ -11,6 +11,8 @@ import com.example.oliverh.bakerapp.Constants;
 import com.squareup.moshi.Json;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Entity
 public class Recipe {
@@ -30,10 +32,10 @@ public class Recipe {
     private String imageURL = Constants.INVALID_URL;
 
     @Ignore
-    private ArrayList<RecipeIngredient> ingredients;
+    private List<RecipeIngredient> ingredients;
 
     @Ignore
-    private ArrayList<RecipeStep> steps;
+    private List<RecipeStep> steps;
 
     // No parameter constructor used by Moshi to initialize missing fields
     //  within inbound JSON objects.
@@ -82,19 +84,25 @@ public class Recipe {
         this.imageURL = mImageURL;
     }
 
-    public ArrayList<RecipeIngredient> getIngredients() {
+    public List<RecipeIngredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(ArrayList<RecipeIngredient> ingredients) {
+    public void setIngredients(List<RecipeIngredient> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public ArrayList<RecipeStep> getSteps() {
+    public List<RecipeStep> getSteps() {
         return steps;
     }
 
-    public void setSteps(ArrayList<RecipeStep> steps) {
+    public void setSteps(List<RecipeStep> steps) {
         this.steps = steps;
+    }
+
+    @Override
+    public String toString() {
+        String content = String.format(Locale.ENGLISH, "Recipe Name: %s, ID: %d, Servings: %d, ImageUrl: %s", recipeName, id, servings, imageURL);
+        return content;
     }
 }
