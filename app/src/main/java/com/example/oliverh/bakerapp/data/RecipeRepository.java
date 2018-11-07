@@ -2,22 +2,18 @@ package com.example.oliverh.bakerapp.data;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
-import android.graphics.Movie;
 import android.support.annotation.NonNull;
 
 import com.example.oliverh.bakerapp.AppExecutors;
 import com.example.oliverh.bakerapp.data.database.AppDatabase;
 import com.example.oliverh.bakerapp.data.database.Recipe;
 import com.example.oliverh.bakerapp.data.database.RecipeDao;
-import com.example.oliverh.bakerapp.data.database.RecipeIngredient;
 import com.example.oliverh.bakerapp.data.database.RecipeIngredientDao;
-import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.database.RecipeStepDao;
 import com.example.oliverh.bakerapp.data.network.utils.RecipeNetworkAPI;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -50,13 +46,13 @@ public class RecipeRepository {
     }
 
     public void getRecipeListData(final Context context) {
-        Timber.d("Execute API request for PopularMovies list");
+        Timber.d("Execute API request for Recipe List");
         Call recipeListCall = RecipeNetworkAPI.getRecipeListDump(context);
         getData(recipeListCall, Recipe.class);
     }
 
     private void getData(final Call apiCall, final Type targetDataType) {
-        final MutableLiveData<Recipe> movieApiResponse = new MutableLiveData<>();
+        final MutableLiveData<Recipe> recipeApiResponse = new MutableLiveData<>();
 
         AppExecutors.getInstance().networkIO().execute(new Runnable() {
             @Override
