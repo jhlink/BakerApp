@@ -21,7 +21,7 @@ public class RecipeStep {
     //      required by Room.
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "recipe_step_id")
-    private int recipeStepId;
+    private transient int recipeStepId;
 
     //  stepIndex or recipe_step_index refers to the instruction step index.
     //      The step ids found in the raw JSON file imply that the order of the recipe instructions
