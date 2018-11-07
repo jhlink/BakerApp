@@ -38,7 +38,9 @@ public class Recipe {
     // No parameter constructor used by Moshi to initialize missing fields
     //  within inbound JSON objects.
     //  SRC: https://github.com/square/moshi#default-values--constructors
+    // Ensure that Room ignores this constructor
     @SuppressWarnings("unused")
+    @Ignore
     public Recipe() {}
 
     public Recipe(int id, String recipeName, int servings, String imageURL) {
