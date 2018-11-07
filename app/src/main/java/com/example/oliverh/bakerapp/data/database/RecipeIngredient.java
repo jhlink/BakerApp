@@ -17,17 +17,16 @@ public class RecipeIngredient {
     //      required by Room.
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "recipe_ingredient_id")
-    private int recipeIngredientId;
+    private transient int recipeIngredientId;
 
     @ColumnInfo(name = "recipe_id")
-    private int recipeId;
+    private transient int recipeId;
 
     private String ingredient;
     private int quantity;
 
     @ColumnInfo(name = "measurement")
     private String measure;
-
 
     public RecipeIngredient(int recipeIngredientId, int recipeId, int quantity, String measure, String ingredient) {
         this.recipeIngredientId = recipeIngredientId;
