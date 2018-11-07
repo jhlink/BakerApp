@@ -3,8 +3,10 @@ package com.example.oliverh.bakerapp.data.database;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.example.oliverh.bakerapp.Constants;
 import com.squareup.moshi.Json;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
@@ -39,12 +41,19 @@ public class RecipeStep {
 
     @ColumnInfo(name = "video_url")
     @Json(name = "videoURL")
-    private String videoUrl;
+    private String videoUrl = Constants.INVALID_URL;
 
     @ColumnInfo(name = "thumbnail_url")
     @Json(name = "thumbnailURL")
-    private String thumbnailUrl;
+    private String thumbnailUrl = Constants.INVALID_URL;
 
+    // No parameter constructor used by Moshi to initialize missing fields
+    //  within inbound JSON objects.
+    //  SRC: https://github.com/square/moshi#default-values--constructors
+    // Ensure that Room ignores this constructor
+    @SuppressWarnings("unused")
+    @Ignore
+    public RecipeStep() {}
 
     public RecipeStep(int recipeStepId, int stepIndex, int recipeId, String shortDescription, int description, String videoUrl, String thumbnailUrl) {
         this.recipeStepId = recipeStepId;
