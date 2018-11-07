@@ -7,6 +7,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 
+import com.example.oliverh.bakerapp.Constants;
 import com.squareup.moshi.Json;
 
 import java.util.ArrayList;
@@ -26,13 +27,19 @@ public class Recipe {
 
     @ColumnInfo(name = "image")
     @Json(name = "image")
-    private String imageURL;
+    private String imageURL = Constants.INVALID_URL;
 
     @Ignore
     private ArrayList<RecipeIngredient> ingredients;
 
     @Ignore
     private ArrayList<RecipeStep> steps;
+
+    // No parameter constructor used by Moshi to initialize missing fields
+    //  within inbound JSON objects.
+    //  SRC: https://github.com/square/moshi#default-values--constructors
+    @SuppressWarnings("unused")
+    public Recipe() {}
 
     public Recipe(int id, String recipeName, int servings, String imageURL) {
         this.id = id;
