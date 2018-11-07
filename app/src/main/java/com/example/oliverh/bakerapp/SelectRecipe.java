@@ -1,6 +1,7 @@
 package com.example.oliverh.bakerapp;
 
 import android.arch.persistence.room.Database;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -23,5 +24,9 @@ public class SelectRecipe extends AppCompatActivity {
         }
 
         Timber.plant(new Timber.DebugTree());
+
+        Context context = getApplicationContext();
+        AppDatabase mDb = AppDatabase.getInstance(context);
+        RecipeRepository.getInstance(mDb).getRecipeListData(context);
     }
 }
