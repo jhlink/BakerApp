@@ -6,6 +6,9 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+
+import com.squareup.moshi.Json;
+
 import java.util.ArrayList;
 
 @Entity
@@ -15,12 +18,14 @@ public class Recipe {
     private int id;
 
     @ColumnInfo(name = "name")
+    @Json(name = "name")
     private String recipeName;
 
     @ColumnInfo(name = "servings")
     private int servings;
 
     @ColumnInfo(name = "image")
+    @Json(name = "image")
     private String imageURL;
 
     @Ignore
