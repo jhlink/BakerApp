@@ -39,6 +39,7 @@ public class RecipeRepository {
     private RecipeIngredientDao mRecipeIngredientDao;
     private RecipeStepDao mRecipeStepDao;
     private MediatorLiveData<RepositoryResponse> mediatorLiveDataRecipeList = new MediatorLiveData<>();
+    private LiveData<RepositoryResponse> repoResponse;
 
     private final Context mContext;
 
@@ -59,8 +60,8 @@ public class RecipeRepository {
         LiveData<RepositoryResponse> dbSource =
                 Transformations.map(mRecipeDao.loadAllRecipes(), new Function<List<Recipe>, RepositoryResponse>(){
                     @Override
-                    public RepositoryResponse apply(List<Recipe> movies) {
-                        RepositoryResponse databaseResponse = new RepositoryResponse(movies);
+                    public RepositoryResponse apply(List<Recipe> recipes) {
+                        RepositoryResponse databaseResponse = new RepositoryResponse(recipes);
                         return databaseResponse;
                     }
                 });
@@ -99,6 +100,25 @@ public class RecipeRepository {
     public LiveData<RepositoryResponse> getRecipeList() {
         fetchRecipeListData();
         return mediatorLiveDataRecipeList;
+    }
+
+    public LiveData<RepositoryResponse> getRecipe(int recipeId) {
+        LiveData<Recipe> recipe = mRecipeDao.getRecipeById(recipeId);
+
+        final List<RecipeStep> tRecipeSteps =  mRecipeStepDao.getRecipeStepsByRecipeId(recipeId);
+        final List<RecipeIngredient> tRecipeIngredients = mRecipeIngredientDao.getRecipeIngredientsById(recipeId);
+
+        LiveData<RepositoryResponse> result =
+            Transformations.map(recipe, new Function<Recipe, RepositoryResponse>() {
+                @Override
+                public RepositoryResponse apply(Recipe input) {
+                    input.setIngredients(tRecipeIngredients);
+                    input.setSteps(tRecipeSteps);
+                    return new RepositoryResponse(input);
+                }
+            });
+
+        return result;
     }
 
     private synchronized void getData(final Call apiCall) {
