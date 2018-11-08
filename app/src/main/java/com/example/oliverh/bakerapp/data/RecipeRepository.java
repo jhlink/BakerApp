@@ -90,34 +90,14 @@ public class RecipeRepository {
         Call recipeListCall = RecipeNetworkAPI.getRecipeListDump(mContext);
         getData(recipeListCall);
 
-        //mediatorLiveDataRecipeList.addSource(apiResponse, new Observer<RepositoryResponse>() {
-        //    @Override
-        //    public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
-        //        if (repositoryResponse != null || repositoryResponse.getError() != null) {
-        //            mediatorLiveDataRecipeList.removeSource(apiResponse);
-        //            mediatorLiveDataRecipeList.addSource(mRecipeDao.loadAllRecipes(), new Observer<List<Recipe>>() {
-        //                @Override
-        //                public void onChanged(@Nullable List<Recipe> recipes) {
-        //                    mediatorLiveDataRecipeList.postValue(recipes);
-        //                }
-        //            });
-        //        }
-        //    }
-        //});
-
         // TODO: Test recipeRequest using IdlingResource in Espresso.
         //String test = context.getString(R.string.test_json_recipe_list);
         //Timber.d("Result -- %s : ", test);
     }
 
-    public LiveData<RepositoryResponse> getRecipeListData() {
-        //Timber.d("Execute API request for Recipe List");
 
+    public LiveData<RepositoryResponse> getRecipeList() {
         fetchRecipeListData();
-        // TODO: Test recipeRequest using IdlingResource in Espresso.
-        //String test = context.getString(R.string.test_json_recipe_list);
-        //Timber.d("Result -- %s : ", test);
-
         return mediatorLiveDataRecipeList;
     }
 
