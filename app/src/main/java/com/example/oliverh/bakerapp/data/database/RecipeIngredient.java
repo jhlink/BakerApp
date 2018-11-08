@@ -85,7 +85,7 @@ public class RecipeIngredient {
 
     @Override
     public String toString() {
-        String compiled = String.format(Locale.ENGLISH, "Ingredient: %s, Quantity: %.2f, Measurement: %s", ingredient, quantity, measure);
+        String compiled = String.format(Locale.ENGLISH, "RecipeId: %d, Ingredient: %s, Quantity: %.2f, Measurement: %s", recipeId, ingredient, quantity, measure);
         return compiled;
     }
 }
