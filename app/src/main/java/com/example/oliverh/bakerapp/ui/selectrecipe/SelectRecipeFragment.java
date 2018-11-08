@@ -13,8 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.oliverh.bakerapp.R;
-import com.example.oliverh.bakerapp.dummy.DummyContent;
-import com.example.oliverh.bakerapp.dummy.DummyContent.DummyItem;
+import com.example.oliverh.bakerapp.data.database.Recipe;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * A fragment representing a list of Items.
@@ -28,7 +32,7 @@ public class SelectRecipeFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    //[private OnListFragmentInteractionListener mListener;
 
     private SelectRecipeViewModel mViewModel;
 
@@ -39,7 +43,7 @@ public class SelectRecipeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(SelectRecipeViewModel.class);
+        //mViewModel = ViewModelProviders.of(this).get(SelectRecipeViewModel.class);
         // TODO: Use the ViewModel
     }
 
@@ -73,18 +77,31 @@ public class SelectRecipeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipe_recycler_view, container, false);
-        //return inflater.inflate(R.layout.recipe_cardview_item, container, false);
+
+        List<Recipe> recipes = new ArrayList<Recipe>();
+        recipes.add(new Recipe(5, "test", 8, ""));
+        recipes.add(new Recipe(6, "testFirst", 99, ""));
+        recipes.add(new Recipe(7, "peanut butter", 0, ""));
+        recipes.add(new Recipe(8, "jelly", 9, ""));
+        recipes.add(new Recipe(9, "bread", 2, ""));
+        recipes.add(new Recipe(10, "testFirst", 99, ""));
+        recipes.add(new Recipe(11, "peanut butter", 0, ""));
+        recipes.add(new Recipe(12, "jelly", 9, ""));
+        recipes.add(new Recipe(13, "bread", 2, ""));
 
         // Set the adapter
         if (view instanceof RecyclerView) {
+            Timber.d("This is RecyclerView");
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
+                Timber.d("RV: Set to LinearLayout");
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                Timber.d("RV: Set to GridLayout");
+                recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
             }
-            recyclerView.setAdapter(new SelectRecipeRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new SelectRecipeRecyclerViewAdapter(recipes));//, mListener));
         }
         return view;
     }
@@ -93,18 +110,18 @@ public class SelectRecipeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
+        //if (context instanceof OnListFragmentInteractionListener) {
+        //    mListener = (OnListFragmentInteractionListener) context;
+        //} else {
+        //    throw new RuntimeException(context.toString()
+        //            + " must implement OnListFragmentInteractionListener");
+        //}
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        //mListener = null;
     }
 
     /**
@@ -117,8 +134,8 @@ public class SelectRecipeFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
-    }
+    //public interface OnListFragmentInteractionListener {
+    //    // TODO: Update argument type and name
+    //    void onListFragmentInteraction(Recipe recipe);
+    //}
 }
