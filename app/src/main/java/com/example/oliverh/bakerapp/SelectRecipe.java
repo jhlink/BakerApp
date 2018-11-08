@@ -8,6 +8,7 @@ import android.os.Bundle;
 import com.example.oliverh.bakerapp.data.RecipeRepository;
 import com.example.oliverh.bakerapp.data.database.AppDatabase;
 import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment;
+import com.facebook.stetho.Stetho;
 
 import timber.log.Timber;
 
@@ -23,10 +24,17 @@ public class SelectRecipe extends AppCompatActivity {
                     .commitNow();
         }
 
+        initializeStetho();
+
         Timber.plant(new Timber.DebugTree());
 
         Context context = getApplicationContext();
         AppDatabase mDb = AppDatabase.getInstance(context);
         RecipeRepository.getInstance(mDb).getRecipeListData(context);
+
+    }
+
+    private void initializeStetho() {
+        Stetho.initializeWithDefaults(this);
     }
 }
