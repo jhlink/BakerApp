@@ -61,8 +61,10 @@ public class RecipeRepository {
                 Transformations.map(mRecipeDao.loadAllRecipes(), new Function<List<Recipe>, RepositoryResponse>(){
                     @Override
                     public RepositoryResponse apply(List<Recipe> recipes) {
-                        RepositoryResponse databaseResponse = new RepositoryResponse(recipes);
-                        return databaseResponse;
+                        if (recipes.isEmpty()) {
+                            return new RepositoryResponse(new IOException("No Data"));
+                        }
+                        return new RepositoryResponse(recipes);
                     }
                 });
 
