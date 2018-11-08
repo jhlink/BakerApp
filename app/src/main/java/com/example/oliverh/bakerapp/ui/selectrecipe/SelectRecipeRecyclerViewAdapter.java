@@ -1,45 +1,74 @@
 package com.example.oliverh.bakerapp.ui.selectrecipe;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
-import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment.OnListFragmentInteractionListener;
+//import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment.OnListFragmentInteractionListener;
+
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Recipe} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
-public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeRecyclerViewAdapter.ViewHolder> {
+public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeRecyclerViewAdapter.RecipeViewHolder> {
 
-    private final List<Recipe> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private List<Recipe> mValues;
+    //private final OnListFragmentInteractionListener mListener;
 
-    public SelectRecipeRecyclerViewAdapter(List<Recipe> items, OnListFragmentInteractionListener listener) {
+    public SelectRecipeRecyclerViewAdapter(List<Recipe> items){
+       // , OnListFragmentInteractionListener listener) {
         mValues = items;
-        mListener = listener;
+     //   mListener = listener;
     }
 
+    public class RecipeViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tv_select_recipe_name) TextView tv_recipeName;
+        @BindView(R.id.tv_select_recipe_servings) TextView tv_servingSize;
+
+        public RecipeViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+
+        public void logContent() {
+            Timber.d("Recipe Name: %s, Servings: %s, ImageUrl: %s",
+                    tv_recipeName.getText(),
+                    tv_servingSize.getText(),
+                    "") ;
+        }
+
+        public void bindData(Recipe recipe) {
+            tv_recipeName.setText(recipe.getRecipeName());
+            tv_servingSize.setText(String.valueOf(recipe.getServings()));
+        }
+    }
+
+
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+    public RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recipe_cardview_item, parent, false);
-        return new ViewHolder(view);
+        return new RecipeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        Recipe recipe = mValues.get(position);
-        holder.tv_recipeName.setText(recipe.getRecipeName());
-        holder.tv_servingSize.setText(recipe.getServings());
+    public void onBindViewHolder(@NonNull RecipeViewHolder viewHolder, int i) {
+        if (mValues.size() > 0) {
+            Recipe recipe = mValues.get(i);
+            viewHolder.bindData(recipe);
+        }
 
         // TODO: Implement onClickListener for Recipe Card -> RecipeDetails view
         //holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -59,22 +88,4 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView tv_recipeName;
-        public final ImageView iv_recipeImage;
-        public final TextView tv_servingSize;
-
-
-        public ViewHolder(View view) {
-            super(view);
-            tv_recipeName = view.findViewById(R.id.tv_select_recipe_name);
-            tv_servingSize = view.findViewById(R.id.tv_select_recipe_servings);
-            iv_recipeImage = view.findViewById(R.id.iv_select_recipe_image);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + tv_recipeName.getText() + "'";
-        }
-    }
 }
