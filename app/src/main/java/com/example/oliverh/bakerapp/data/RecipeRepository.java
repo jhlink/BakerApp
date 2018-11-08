@@ -146,6 +146,10 @@ public class RecipeRepository {
                                 @Override
                                 public void run() {
                                     mRecipeDao.insertRecipes(parsedData);
+                                    for (Recipe recipe : parsedData) {
+                                        mRecipeIngredientDao.insertRecipeIngredients(recipe.getIngredients());
+                                        mRecipeStepDao.insertRecipeSteps(recipe.getSteps());
+                                    }
 
                                 }
                             });
