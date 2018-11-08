@@ -1,9 +1,13 @@
 package com.example.oliverh.bakerapp.data;
 
+import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.Transformations;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.example.oliverh.bakerapp.AppExecutors;
 import com.example.oliverh.bakerapp.data.database.AppDatabase;
@@ -34,39 +38,90 @@ public class RecipeRepository {
     private RecipeDao mRecipeDao;
     private RecipeIngredientDao mRecipeIngredientDao;
     private RecipeStepDao mRecipeStepDao;
+    private MediatorLiveData<RepositoryResponse> mediatorLiveDataRecipeList = new MediatorLiveData<>();
 
-    private RecipeRepository(final AppDatabase database) {
+    private final Context mContext;
+
+    private RecipeRepository(Context context, final AppDatabase database) {
         mDb = database;
+        mContext = context;
         mRecipeDao = mDb.recipeDao();
         mRecipeIngredientDao = mDb.recipeIngredientDao();
         mRecipeStepDao = mDb.recipeStepDao();
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mRecipeDao.nukeTable();
+            }
+        });
+
+        LiveData<RepositoryResponse> dbSource =
+                Transformations.map(mRecipeDao.loadAllRecipes(), new Function<List<Recipe>, RepositoryResponse>(){
+                    @Override
+                    public RepositoryResponse apply(List<Recipe> movies) {
+                        RepositoryResponse databaseResponse = new RepositoryResponse(movies);
+                        return databaseResponse;
+                    }
+                });
+
+        mediatorLiveDataRecipeList.addSource(dbSource, new Observer<RepositoryResponse>() {
+            @Override
+            public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+                Timber.d("Initialized Mediator Live Data");
+                mediatorLiveDataRecipeList.postValue(repositoryResponse);
+            }
+        });
     }
 
-    public static RecipeRepository getInstance(final AppDatabase database) {
+    public static RecipeRepository getInstance(final Context context, final AppDatabase database) {
         if (sInstance == null) {
             synchronized (RecipeRepository.class) {
                 if (sInstance == null) {
-                    sInstance = new RecipeRepository(database);
+                    sInstance = new RecipeRepository(context, database);
                 }
             }
         }
         return sInstance;
     }
 
-    public LiveData<RepositoryResponse> getRecipeListData(final Context context) {
+    public void fetchRecipeListData() {
         Timber.d("Execute API request for Recipe List");
+        Call recipeListCall = RecipeNetworkAPI.getRecipeListDump(mContext);
+        getData(recipeListCall);
+
+        //mediatorLiveDataRecipeList.addSource(apiResponse, new Observer<RepositoryResponse>() {
+        //    @Override
+        //    public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+        //        if (repositoryResponse != null || repositoryResponse.getError() != null) {
+        //            mediatorLiveDataRecipeList.removeSource(apiResponse);
+        //            mediatorLiveDataRecipeList.addSource(mRecipeDao.loadAllRecipes(), new Observer<List<Recipe>>() {
+        //                @Override
+        //                public void onChanged(@Nullable List<Recipe> recipes) {
+        //                    mediatorLiveDataRecipeList.postValue(recipes);
+        //                }
+        //            });
+        //        }
+        //    }
+        //});
 
         // TODO: Test recipeRequest using IdlingResource in Espresso.
         //String test = context.getString(R.string.test_json_recipe_list);
         //Timber.d("Result -- %s : ", test);
-
-        Call recipeListCall = RecipeNetworkAPI.getRecipeListDump(context);
-        return getData(recipeListCall);
     }
 
-    private MutableLiveData<RepositoryResponse> getData(final Call apiCall) {
-        final MutableLiveData<RepositoryResponse> recipeApiResponse = new MutableLiveData<>();
+    public LiveData<RepositoryResponse> getRecipeListData() {
+        //Timber.d("Execute API request for Recipe List");
 
+        fetchRecipeListData();
+        // TODO: Test recipeRequest using IdlingResource in Espresso.
+        //String test = context.getString(R.string.test_json_recipe_list);
+        //Timber.d("Result -- %s : ", test);
+
+        return mediatorLiveDataRecipeList;
+    }
+
+    private synchronized void getData(final Call apiCall) {
 
         AppExecutors.getInstance().networkIO().execute(new Runnable() {
             @Override
@@ -75,28 +130,32 @@ public class RecipeRepository {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Timber.d("-- API Request[Fail]: %s", e.getMessage());
-                        recipeApiResponse.postValue(new RepositoryResponse(e));
+                        mediatorLiveDataRecipeList.postValue(new RepositoryResponse(e));
                     }
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String responseString = response.body().string();
-                            Timber.d("-- API Request[Success]: %s", responseString);
+                            //Timber.d("-- API Request[Success]: %s", responseString);
 
                             final List<Recipe> parsedData = jsonParser(responseString);
-                            printRecipeList(parsedData);
+                            //printRecipeList(parsedData);
 
-                            recipeApiResponse.postValue(new RepositoryResponse(parsedData));
+                            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mRecipeDao.insertRecipes(parsedData);
+
+                                }
+                            });
                         }
                     }
-                });
+                })
+                ;
             }
         });
-
-        return recipeApiResponse;
     }
-
 
     private List<Recipe> jsonParser(String jsonResponse) throws IOException {
         Moshi moshi = new Moshi.Builder().build();
@@ -114,10 +173,22 @@ public class RecipeRepository {
         JsonAdapter<List<Recipe>> jsonAdapter = moshi.adapter(recipeListType);
 
         List<Recipe> recipes = jsonAdapter.fromJson(jsonResponse);
-        Timber.d("Object %s : ", jsonResponse);
-        printRecipeList(recipes);
+
+        primeRecipes(recipes);
+
+        //Timber.d("Object %s : ", jsonResponse);
+        //printRecipeList(recipes);
 
         return recipes;
+    }
+
+    private void primeRecipes( List<Recipe> recipeList ) {
+        if (recipeList.isEmpty()) {
+            return ;
+        }
+        for (Recipe element : recipeList) {
+            element.initalizeRecipeIdInRecipeSubtypes();
+        }
     }
 
     private void printRecipeList( List<Recipe> recipeList ) {

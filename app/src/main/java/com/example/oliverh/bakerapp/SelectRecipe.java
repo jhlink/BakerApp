@@ -30,7 +30,7 @@ public class SelectRecipe extends AppCompatActivity {
 
         Context context = getApplicationContext();
         AppDatabase mDb = AppDatabase.getInstance(context);
-        RecipeRepository.getInstance(mDb).getRecipeListData(context);
+        RecipeRepository.getInstance(context, mDb).getRecipeListData();
 
     }
 
