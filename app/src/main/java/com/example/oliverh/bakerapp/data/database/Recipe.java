@@ -105,4 +105,22 @@ public class Recipe {
         String content = String.format(Locale.ENGLISH, "Recipe Name: %s, ID: %d, Servings: %d, ImageUrl: %s", recipeName, id, servings, imageURL);
         return content;
     }
+
+    public void initalizeRecipeIdInRecipeSubtypes() {
+        assignRecipeIdToRecipeIngredients();
+        assignRecipeIdToRecipeSteps();
+    }
+
+    private void assignRecipeIdToRecipeIngredients() {
+        for (RecipeIngredient ingredient : ingredients) {
+            ingredient.setRecipeId(id);
+        }
+    }
+
+    private void assignRecipeIdToRecipeSteps() {
+        for (RecipeStep step : steps) {
+            step.setRecipeId(id);
+        }
+    }
+
 }
