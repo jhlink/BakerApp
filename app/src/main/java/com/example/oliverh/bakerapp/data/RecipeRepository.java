@@ -1,5 +1,6 @@
 package com.example.oliverh.bakerapp.data;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import com.example.oliverh.bakerapp.data.database.RecipeIngredient;
 import com.example.oliverh.bakerapp.data.database.RecipeIngredientDao;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.database.RecipeStepDao;
+import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 import com.example.oliverh.bakerapp.data.network.utils.RecipeNetworkAPI;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -51,7 +53,7 @@ public class RecipeRepository {
         return sInstance;
     }
 
-    public void getRecipeListData(final Context context) {
+    public LiveData<RepositoryResponse> getRecipeListData(final Context context) {
         Timber.d("Execute API request for Recipe List");
 
         // TODO: Test recipeRequest using IdlingResource in Espresso.
@@ -59,11 +61,11 @@ public class RecipeRepository {
         //Timber.d("Result -- %s : ", test);
 
         Call recipeListCall = RecipeNetworkAPI.getRecipeListDump(context);
-        getData(recipeListCall);
+        return getData(recipeListCall);
     }
 
-    private void getData(final Call apiCall) {
-        final MutableLiveData<Recipe> recipeApiResponse = new MutableLiveData<>();
+    private MutableLiveData<RepositoryResponse> getData(final Call apiCall) {
+        final MutableLiveData<RepositoryResponse> recipeApiResponse = new MutableLiveData<>();
 
 
         AppExecutors.getInstance().networkIO().execute(new Runnable() {
@@ -73,20 +75,26 @@ public class RecipeRepository {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Timber.d("-- API Request[Fail]: %s", e.getMessage());
+                        recipeApiResponse.postValue(new RepositoryResponse(e));
                     }
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if (response.isSuccessful()) {
-                            Timber.d("-- API Request[Success]: %s", response.body().toString());
+                            String responseString = response.body().string();
+                            Timber.d("-- API Request[Success]: %s", responseString);
 
-                            final List<Recipe> parsedData = jsonParser(response.body().toString());
+                            final List<Recipe> parsedData = jsonParser(responseString);
                             printRecipeList(parsedData);
+
+                            recipeApiResponse.postValue(new RepositoryResponse(parsedData));
                         }
                     }
                 });
             }
         });
+
+        return recipeApiResponse;
     }
 
 
@@ -106,6 +114,7 @@ public class RecipeRepository {
         JsonAdapter<List<Recipe>> jsonAdapter = moshi.adapter(recipeListType);
 
         List<Recipe> recipes = jsonAdapter.fromJson(jsonResponse);
+        Timber.d("Object %s : ", jsonResponse);
         printRecipeList(recipes);
 
         return recipes;
