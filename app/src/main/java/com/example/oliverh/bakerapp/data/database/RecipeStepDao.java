@@ -11,7 +11,7 @@ import java.util.List;
 @Dao
 public interface RecipeStepDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertRecipeSteps(RecipeStep... recipeSteps);
+    void insertRecipeSteps(List<RecipeStep> steps);
 
     @Query("SELECT * FROM RecipeStep WHERE recipe_id =:recipeId")
     LiveData<List<RecipeStep>> getRecipeStepsByRecipeId(int recipeId);
