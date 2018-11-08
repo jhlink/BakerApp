@@ -121,6 +121,36 @@ public class RecipeRepository {
         return result;
     }
 
+    public LiveData<RepositoryResponse> getRecipeSteps(final int recipeId) {
+        LiveData<List<RecipeStep>> stepLiveData = new MediatorLiveData<>();
+
+        LiveData<RepositoryResponse> result =
+                Transformations.map(stepLiveData, new Function<List<RecipeStep>, RepositoryResponse>() {
+                    @Override
+                    public RepositoryResponse apply(List<RecipeStep> input) {
+                        List<RecipeStep> tRecipeSteps =  mRecipeStepDao.getRecipeStepsByRecipeId(recipeId);
+                        return new RepositoryResponse(tRecipeSteps);
+                    }
+                });
+
+        return result;
+    }
+
+    public LiveData<RepositoryResponse> getRecipeIngredients(final int recipeId) {
+        LiveData<List<RecipeIngredient>> ingredientLiveData = new MediatorLiveData<>();
+
+        LiveData<RepositoryResponse> result =
+                Transformations.map(ingredientLiveData, new Function<List<RecipeIngredient>, RepositoryResponse>() {
+                    @Override
+                    public RepositoryResponse apply(List<RecipeIngredient> input) {
+                        List<RecipeIngredient> tRecipeIngredients = mRecipeIngredientDao.getRecipeIngredientsById(recipeId);
+                        return new RepositoryResponse(tRecipeIngredients);
+                    }
+                });
+
+        return result;
+    }
+
     private synchronized void getData(final Call apiCall) {
 
         AppExecutors.getInstance().networkIO().execute(new Runnable() {
