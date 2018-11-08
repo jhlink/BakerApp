@@ -4,25 +4,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
+import com.example.oliverh.bakerapp.data.database.Recipe;
 import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment.OnListFragmentInteractionListener;
-import com.example.oliverh.bakerapp.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Recipe} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Recipe> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public SelectRecipeRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public SelectRecipeRecyclerViewAdapter(List<Recipe> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -36,20 +37,21 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        //holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        Recipe recipe = mValues.get(position);
+        holder.tv_recipeName.setText(recipe.getRecipeName());
+        holder.tv_servingSize.setText(recipe.getServings());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+        // TODO: Implement onClickListener for Recipe Card -> RecipeDetails view
+        //holder.mView.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //        if (null != mListener) {
+        //            // Notify the active callbacks interface (the activity, if the
+        //            // fragment is attached to one) that an item has been selected.
+        //            //mListener.onListFragmentInteraction(holder.mItem);
+        //        }
+        //    }
+        //});
     }
 
     @Override
@@ -58,20 +60,21 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView tv_recipeName;
+        public final ImageView iv_recipeImage;
+        public final TextView tv_servingSize;
+
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
-            //mIdView = (TextView) view.findViewById(R.id.);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            tv_recipeName = view.findViewById(R.id.tv_select_recipe_name);
+            tv_servingSize = view.findViewById(R.id.tv_select_recipe_servings);
+            iv_recipeImage = view.findViewById(R.id.iv_select_recipe_image);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + tv_recipeName.getText() + "'";
         }
     }
 }
