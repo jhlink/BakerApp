@@ -27,6 +27,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.moshi:moshi:1.7.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 // Room components
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
