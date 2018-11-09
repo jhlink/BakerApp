@@ -1,8 +1,11 @@
 package com.example.oliverh.bakerapp.ui.selectrecipe;
 
+import android.arch.persistence.room.Transaction;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.oliverh.bakerapp.R;
@@ -15,24 +18,43 @@ import timber.log.Timber;
 
 public class SelectRecipe extends AppCompatActivity implements
         SelectRecipeFragment.OnListFragmentInteractionListener {
+
+    private static final String RECIPE_LIST_FRAGMENT_TAG = "RECIPE_LIST_FRAG_TAG";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_recipe_activity);
+
+        initializeTimber();
+
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recipe_collection_container, SelectRecipeFragment.newInstance())
-                    .commitNow();
+
+            // TODO: Properly handle this.
+            SelectRecipeFragment fragment = (SelectRecipeFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_LIST_FRAGMENT_TAG);
+
+            if (fragment == null) {
+                Timber.d("Create fragment.");
+                fragment = SelectRecipeFragment.newInstance();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.recipe_collection_container,
+                                fragment,
+                                RECIPE_LIST_FRAGMENT_TAG)
+                        .commitNow();
+            } else {
+                Timber.d("Found fragment.");
+            }
+
         }
 
-        initializeStetho();
+//        initializeStetho();
+    }
 
-        Timber.plant(new Timber.DebugTree());
-
-        Context context = getApplicationContext();
-        AppDatabase mDb = AppDatabase.getInstance(context);
-        RecipeRepository.getInstance(context, mDb).getRecipeList();
-
+    private static void initializeTimber(){
+        if (Timber.treeCount() < 1) {
+            Timber.plant(new Timber.DebugTree());
+            Timber.d("Timber Tree Count: %d", Timber.treeCount());
+        }
     }
 
     private void initializeStetho() {
