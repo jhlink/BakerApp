@@ -32,7 +32,7 @@ public class SelectRecipeFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    //[private OnListFragmentInteractionListener mListener;
+    private OnListFragmentInteractionListener mListener;
 
     private SelectRecipeViewModel mViewModel;
 
@@ -101,7 +101,7 @@ public class SelectRecipeFragment extends Fragment {
                 Timber.d("RV: Set to GridLayout");
                 recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
             }
-            recyclerView.setAdapter(new SelectRecipeRecyclerViewAdapter(recipes));//, mListener));
+            recyclerView.setAdapter(new SelectRecipeRecyclerViewAdapter(recipes, mListener));
         }
         return view;
     }
@@ -110,18 +110,18 @@ public class SelectRecipeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        //if (context instanceof OnListFragmentInteractionListener) {
-        //    mListener = (OnListFragmentInteractionListener) context;
-        //} else {
-        //    throw new RuntimeException(context.toString()
-        //            + " must implement OnListFragmentInteractionListener");
-        //}
+        if (context instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        //mListener = null;
+        mListener = null;
     }
 
     /**
@@ -134,8 +134,8 @@ public class SelectRecipeFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    //public interface OnListFragmentInteractionListener {
-    //    // TODO: Update argument type and name
-    //    void onListFragmentInteraction(Recipe recipe);
-    //}
+    public interface OnListFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onListFragmentInteraction(Recipe recipe);
+    }
 }

@@ -9,13 +9,14 @@ import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
-//import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment.OnListFragmentInteractionListener;
+import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment.OnListFragmentInteractionListener;
 
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import timber.log.Timber;
 
 /**
@@ -25,17 +26,17 @@ import timber.log.Timber;
 public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeRecyclerViewAdapter.RecipeViewHolder> {
 
     private List<Recipe> mValues;
-    //private final OnListFragmentInteractionListener mListener;
+    private final OnListFragmentInteractionListener mListener;
 
-    public SelectRecipeRecyclerViewAdapter(List<Recipe> items){
-       // , OnListFragmentInteractionListener listener) {
+    public SelectRecipeRecyclerViewAdapter(List<Recipe> items, OnListFragmentInteractionListener listener) {
         mValues = items;
-     //   mListener = listener;
+        mListener = listener;
     }
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_select_recipe_name) TextView tv_recipeName;
         @BindView(R.id.tv_select_recipe_servings) TextView tv_servingSize;
+        private Recipe mRecipe;
 
         public RecipeViewHolder(View view) {
             super(view);
@@ -50,11 +51,18 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
         }
 
         public void bindData(Recipe recipe) {
+            mRecipe = recipe;
             tv_recipeName.setText(recipe.getRecipeName());
             tv_servingSize.setText(String.valueOf(recipe.getServings()));
         }
-    }
 
+        @OnClick(R.id.cv_recipe_view)
+        void onClickRecipeCard() {
+            if (null != mListener) {
+                mListener.onListFragmentInteraction(mRecipe);
+            }
+        }
+    }
 
     @Override
     public RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -69,18 +77,6 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
             Recipe recipe = mValues.get(i);
             viewHolder.bindData(recipe);
         }
-
-        // TODO: Implement onClickListener for Recipe Card -> RecipeDetails view
-        //holder.mView.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v) {
-        //        if (null != mListener) {
-        //            // Notify the active callbacks interface (the activity, if the
-        //            // fragment is attached to one) that an item has been selected.
-        //            //mListener.onListFragmentInteraction(holder.mItem);
-        //        }
-        //    }
-        //});
     }
 
     @Override

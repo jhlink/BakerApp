@@ -13,8 +13,8 @@ import com.facebook.stetho.Stetho;
 
 import timber.log.Timber;
 
-public class SelectRecipe extends AppCompatActivity {
-   // implements} SelectRecipeFragment.OnListFragmentInteractionListener {
+public class SelectRecipe extends AppCompatActivity implements
+        SelectRecipeFragment.OnListFragmentInteractionListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +39,7 @@ public class SelectRecipe extends AppCompatActivity {
         Stetho.initializeWithDefaults(this);
     }
 
-//    @Override
+    @Override
     public void onListFragmentInteraction(Recipe recipe) {
         Toast.makeText(this, recipe.getRecipeName(), Toast.LENGTH_SHORT).show();
     }
