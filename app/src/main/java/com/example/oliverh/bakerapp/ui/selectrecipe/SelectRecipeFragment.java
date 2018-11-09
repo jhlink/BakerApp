@@ -87,7 +87,7 @@ public class SelectRecipeFragment extends Fragment {
         recipes.add(new Recipe(10, "testFirst", 99, ""));
         recipes.add(new Recipe(11, "peanut butter", 0, ""));
         recipes.add(new Recipe(12, "jelly", 9, ""));
-        recipes.add(new Recipe(13, "bread", 2, ""));
+        recipes.add(new Recipe(13, "bread", 2, "https://i.stack.imgur.com/GsDIl.jpg"));
 
         // Set the adapter
         if (view instanceof RecyclerView) {
