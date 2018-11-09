@@ -28,6 +28,7 @@ public class SelectRecipe extends AppCompatActivity implements
 
         initializeTimber();
 
+
         if (savedInstanceState == null) {
 
             // TODO: Properly handle this.
@@ -35,12 +36,25 @@ public class SelectRecipe extends AppCompatActivity implements
 
             if (fragment == null) {
                 Timber.d("Create fragment.");
-                fragment = SelectRecipeFragment.newInstance();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.recipe_collection_container,
-                                fragment,
-                                RECIPE_LIST_FRAGMENT_TAG)
-                        .commitNow();
+
+                if ( this.findViewById(R.id.tablet_recipe_collection_container) != null ) {
+                    fragment = SelectRecipeFragment.newInstance(3);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.tablet_recipe_collection_container,
+                                    fragment,
+                                    RECIPE_LIST_FRAGMENT_TAG)
+                            .commitNow();
+                } else {
+                    fragment = SelectRecipeFragment.newInstance();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.recipe_collection_container,
+                                    fragment,
+                                    RECIPE_LIST_FRAGMENT_TAG)
+                            .commitNow();
+                }
+
+
+
             } else {
                 Timber.d("Found fragment.");
             }

@@ -60,7 +60,7 @@ public class SelectRecipeFragment extends Fragment {
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static SelectRecipeFragment newInstance(int columnCount) {
-        Timber.d("Question Log");
+        Timber.d("Column Count: %d", columnCount);
         SelectRecipeFragment fragment = new SelectRecipeFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
@@ -102,7 +102,7 @@ public class SelectRecipeFragment extends Fragment {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 Timber.d("RV: Set to GridLayout");
-                recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
             mViewModel.getRecipes().observe(this, new Observer<RepositoryResponse>() {
