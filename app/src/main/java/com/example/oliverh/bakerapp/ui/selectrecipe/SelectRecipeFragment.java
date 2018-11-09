@@ -4,11 +4,14 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +20,6 @@ import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -32,11 +34,17 @@ public class SelectRecipeFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String GRID_STATE_KEY = "GRID_POS";
+
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private SelectRecipeRecyclerViewAdapter adapter;
 
     private SelectRecipeViewModel mViewModel;
+    private RecyclerView recyclerView;
+    private Parcelable mState;
+
+    private static int count = 0;
 
     public static SelectRecipeFragment newInstance() {
         return new SelectRecipeFragment();
@@ -52,6 +60,7 @@ public class SelectRecipeFragment extends Fragment {
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static SelectRecipeFragment newInstance(int columnCount) {
+        Timber.d("Question Log");
         SelectRecipeFragment fragment = new SelectRecipeFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
@@ -67,19 +76,27 @@ public class SelectRecipeFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
+        if (savedInstanceState != null) {
+            String gridStateParcelableKey = GRID_STATE_KEY;
+            mState = savedInstanceState.getParcelable(gridStateParcelableKey);
+        }
         mViewModel = ViewModelProviders.of(this).get(SelectRecipeViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_recipe_recycler_view, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
-            Timber.d("This is RecyclerView");
+            Log.d("Test", "This is RecyclerView");
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
+            adapter = new SelectRecipeRecyclerViewAdapter(null, mListener);
+            recyclerView.setAdapter(adapter);
+
             if (mColumnCount <= 1) {
                 Timber.d("RV: Set to LinearLayout");
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -88,22 +105,33 @@ public class SelectRecipeFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
             }
 
-
-            adapter = new SelectRecipeRecyclerViewAdapter(null, mListener);
-            recyclerView.setAdapter(adapter);
-
             mViewModel.getRecipes().observe(this, new Observer<RepositoryResponse>() {
                 @Override
                 public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
                     List<Recipe> recipes = repositoryResponse.getListOfData();
                     adapter.setRecipes(recipes);
                     adapter.notifyDataSetChanged();
+                    restorePosition();
                 }
             });
         }
         return view;
     }
 
+    private void restorePosition() {
+        if (mState != null) {
+            recyclerView.getLayoutManager().onRestoreInstanceState(mState);
+            mState = null;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mState = recyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(GRID_STATE_KEY, mState);
+    }
 
     @Override
     public void onAttach(Context context) {
