@@ -1,5 +1,6 @@
 package com.example.oliverh.bakerapp.ui.selectrecipe;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
+import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,18 +34,12 @@ public class SelectRecipeFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private SelectRecipeRecyclerViewAdapter adapter;
 
     private SelectRecipeViewModel mViewModel;
 
     public static SelectRecipeFragment newInstance() {
         return new SelectRecipeFragment();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //mViewModel = ViewModelProviders.of(this).get(SelectRecipeViewModel.class);
-        // TODO: Use the ViewModel
     }
 
     /**
@@ -70,23 +66,14 @@ public class SelectRecipeFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        mViewModel = ViewModelProviders.of(this).get(SelectRecipeViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipe_recycler_view, container, false);
-
-        List<Recipe> recipes = new ArrayList<Recipe>();
-        recipes.add(new Recipe(5, "test", 8, ""));
-        recipes.add(new Recipe(6, "testFirst", 99, ""));
-        recipes.add(new Recipe(7, "peanut butter", 0, ""));
-        recipes.add(new Recipe(8, "jelly", 9, ""));
-        recipes.add(new Recipe(9, "bread", 2, ""));
-        recipes.add(new Recipe(10, "testFirst", 99, ""));
-        recipes.add(new Recipe(11, "peanut butter", 0, ""));
-        recipes.add(new Recipe(12, "jelly", 9, ""));
-        recipes.add(new Recipe(13, "bread", 2, "https://i.stack.imgur.com/GsDIl.jpg"));
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -100,7 +87,19 @@ public class SelectRecipeFragment extends Fragment {
                 Timber.d("RV: Set to GridLayout");
                 recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
             }
-            recyclerView.setAdapter(new SelectRecipeRecyclerViewAdapter(recipes, mListener));
+
+
+            adapter = new SelectRecipeRecyclerViewAdapter(null, mListener);
+            recyclerView.setAdapter(adapter);
+
+            mViewModel.getRecipes().observe(this, new Observer<RepositoryResponse>() {
+                @Override
+                public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+                    List<Recipe> recipes = repositoryResponse.getListOfData();
+                    adapter.setRecipes(recipes);
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
         return view;
     }
