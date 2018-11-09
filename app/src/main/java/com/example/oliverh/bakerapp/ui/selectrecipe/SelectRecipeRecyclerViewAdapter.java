@@ -14,6 +14,7 @@ import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment.OnListF
 import com.squareup.picasso.Picasso;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -31,7 +32,7 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
     private final OnListFragmentInteractionListener mListener;
 
     public SelectRecipeRecyclerViewAdapter(List<Recipe> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+        mValues = items == null ? new ArrayList<Recipe>() : items;
         mListener = listener;
     }
 
@@ -90,6 +91,10 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
             Recipe recipe = mValues.get(i);
             viewHolder.bindData(recipe);
         }
+    }
+
+    public void setRecipes(List<Recipe> mRecipes) {
+        mValues = mRecipes;
     }
 
     @Override
