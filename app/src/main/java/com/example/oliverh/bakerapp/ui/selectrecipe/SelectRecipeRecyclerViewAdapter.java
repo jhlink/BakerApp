@@ -5,11 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
 import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment.OnListFragmentInteractionListener;
+import com.squareup.picasso.Picasso;
 
 
 import java.util.List;
@@ -36,6 +38,7 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
     public class RecipeViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_select_recipe_name) TextView tv_recipeName;
         @BindView(R.id.tv_select_recipe_servings) TextView tv_servingSize;
+        @BindView(R.id.iv_select_recipe_image) ImageView iv_recipeImage;
         private Recipe mRecipe;
 
         public RecipeViewHolder(View view) {
@@ -47,13 +50,23 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
             Timber.d("Recipe Name: %s, Servings: %s, ImageUrl: %s",
                     tv_recipeName.getText(),
                     tv_servingSize.getText(),
-                    "") ;
+                    iv_recipeImage.getDrawable()) ;
         }
 
         public void bindData(Recipe recipe) {
             mRecipe = recipe;
             tv_recipeName.setText(recipe.getRecipeName());
             tv_servingSize.setText(String.valueOf(recipe.getServings()));
+
+            if (!recipe.getImageURL().isEmpty()) {
+                Picasso.get()
+                        .load(recipe.getImageURL())
+                        .placeholder(R.drawable.ic_image)
+                        .error(R.drawable.ic_broken_image)
+                        .into(iv_recipeImage);
+            } else {
+                iv_recipeImage.setImageResource(R.drawable.ic_broken_image);
+            }
         }
 
         @OnClick(R.id.cv_recipe_view)
