@@ -185,7 +185,7 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
         mMediaSession.setPlaybackState(mStateBuilder.build());
 
         // MySessionCallback has methods that handle callbacks from a media controller.
-        mMediaSession.setCallback(new MySessionCallback());
+        mMediaSession.setCallback(new RecipeVideoSessionCallback());
 
         // Start the Media Session since the activity is active.
         mMediaSession.setActive(true);
@@ -221,7 +221,7 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
 
     }
 
-    private class MySessionCallback extends MediaSessionCompat.Callback {
+    private class RecipeVideoSessionCallback extends MediaSessionCompat.Callback {
         @Override
         public void onPlay() {
             mExoPlayer.setPlayWhenReady(true);
