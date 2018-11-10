@@ -15,7 +15,7 @@ public class ViewRecipeStep extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.view_recipe_step_activity);
+        setContentView(R.layout.select_recipe_activity);
 
         int recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
         int stepId = getIntent().getIntExtra(getString(R.string.BUNDLE_STEP_ID), -1);
