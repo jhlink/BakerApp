@@ -15,7 +15,7 @@ public class SelectRecipeDetailsFragmentViewModel extends ViewModel {
         recipeSteps = mRepository.getRecipeSteps(recipeId);
     }
 
-    public LiveData<RepositoryResponse> getRecipes() {
+    public LiveData<RepositoryResponse> getRecipeSteps() {
         return recipeSteps;
     }
 }

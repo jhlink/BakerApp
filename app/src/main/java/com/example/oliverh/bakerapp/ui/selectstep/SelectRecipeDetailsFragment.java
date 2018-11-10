@@ -1,18 +1,23 @@
 package com.example.oliverh.bakerapp.ui.selectstep;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.oliverh.bakerapp.R;
+import com.example.oliverh.bakerapp.SelectRecipeDetailsFragmentViewModel;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
+import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +30,11 @@ public class SelectRecipeDetailsFragment extends Fragment {
 
     private static final String ARG_RECIPE_ID = "recipe-id";
     private int recipeId = -1;
+
     private OnListFragmentInteractionListener mListener;
+    private SelectRecipeDetailsRecyclerViewAdapter adapter;
+    private SelectRecipeDetailsFragmentViewModel mViewModel;
+    private RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -34,7 +43,6 @@ public class SelectRecipeDetailsFragment extends Fragment {
     public SelectRecipeDetailsFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static SelectRecipeDetailsFragment newInstance(int recipeId) {
         SelectRecipeDetailsFragment fragment = new SelectRecipeDetailsFragment();
@@ -51,6 +59,9 @@ public class SelectRecipeDetailsFragment extends Fragment {
         if (getArguments() != null) {
             recipeId = getArguments().getInt(ARG_RECIPE_ID);
         }
+
+        SelectRecipeDetailsFragmentViewModelFactory factory = new SelectRecipeDetailsFragmentViewModelFactory(recipeId);
+        mViewModel = ViewModelProviders.of(this, factory).get(SelectRecipeDetailsFragmentViewModel.class);
     }
 
     @Override
@@ -61,9 +72,29 @@ public class SelectRecipeDetailsFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            //recyclerView.setAdapter(new SelectRecipeDetailsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            adapter = new SelectRecipeDetailsRecyclerViewAdapter(null, mListener);
+            recyclerView.setAdapter(adapter);
+
+            mViewModel.getRecipeSteps().observe(this, new Observer<RepositoryResponse>() {
+                @Override
+                public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+                    List<RecipeStep> steps = repositoryResponse.getListOfData();
+
+                    SparseArray sparseArray = new SparseArray<>();
+                    for (int i = 0; i < steps.size() + 1; i++) {
+                        if (i == 0) {
+                            sparseArray.put(0, "Recipe Ingredients");
+                        } else {
+                            sparseArray.put(i, steps.get(i - 1));
+                        }
+                    }
+                    adapter.setDataset(sparseArray);
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
         return view;
     }
@@ -100,8 +131,6 @@ public class SelectRecipeDetailsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Implement Fragmentation interaction with RecipeSteps
-        // TODO: Implement Fragmentation interaction with RecipeIngredients
         void onListFragmentInteraction(int position);
     }
 }

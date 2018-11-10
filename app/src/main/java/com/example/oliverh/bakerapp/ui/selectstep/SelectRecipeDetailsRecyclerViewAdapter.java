@@ -8,11 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
-import com.example.oliverh.bakerapp.data.database.RecipeIngredient;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment.OnListFragmentInteractionListener;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,7 +22,7 @@ import timber.log.Timber;
  */
 public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeDetailsRecyclerViewAdapter.RecipeDetailViewHolder> {
 
-    private final SparseArray mValues;
+    private SparseArray mValues;
     private final OnListFragmentInteractionListener mListener;
 
     public SelectRecipeDetailsRecyclerViewAdapter(SparseArray items, OnListFragmentInteractionListener listener) {
@@ -59,6 +56,10 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
                 break;
         }
         holder.bindString(content);
+    }
+
+    public void setDataset( SparseArray sparseArray ) {
+        this.mValues = sparseArray;
     }
 
     @Override
