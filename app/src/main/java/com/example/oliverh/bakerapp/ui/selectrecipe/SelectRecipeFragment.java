@@ -77,8 +77,7 @@ public class SelectRecipeFragment extends Fragment {
         }
 
         if (savedInstanceState != null) {
-            String gridStateParcelableKey = GRID_STATE_KEY;
-            mState = savedInstanceState.getParcelable(gridStateParcelableKey);
+            mState = savedInstanceState.getParcelable(GRID_STATE_KEY);
         }
         mViewModel = ViewModelProviders.of(this).get(SelectRecipeViewModel.class);
     }
