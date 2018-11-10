@@ -3,6 +3,7 @@ package com.example.oliverh.bakerapp;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment;
 
@@ -43,6 +44,6 @@ public class SelectRecipeDetails extends AppCompatActivity implements SelectReci
 
     @Override
     public void onDetailInteractionListener(int position) {
-
+        Toast.makeText(this, "THIS WORKS! - " + String.valueOf(position), Toast.LENGTH_SHORT).show();
     }
 }
