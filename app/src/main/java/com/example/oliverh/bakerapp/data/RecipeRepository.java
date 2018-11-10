@@ -88,6 +88,16 @@ public class RecipeRepository {
         return sInstance;
     }
 
+    public static RecipeRepository getExistingInstance() {
+        Timber.d("Retrieving existing instance.");
+        if (sInstance != null) {
+            Timber.d("Found existing instance.");
+            return sInstance;
+        }
+        Timber.d("Repository instance not found.");
+        return null;
+    }
+
     public void fetchRecipeListData() {
         Timber.d("Execute API request for Recipe List");
         Call recipeListCall = RecipeNetworkAPI.getRecipeListDump(mContext);
