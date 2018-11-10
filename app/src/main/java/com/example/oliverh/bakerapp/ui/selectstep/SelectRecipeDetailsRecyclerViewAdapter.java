@@ -23,6 +23,7 @@ import timber.log.Timber;
 public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeDetailsRecyclerViewAdapter.RecipeDetailViewHolder> {
 
     private SparseArray mValues;
+    private int selectedPosition = RecyclerView.NO_POSITION;
     private final OnDetailInteractionListener mListener;
 
     public SelectRecipeDetailsRecyclerViewAdapter(SparseArray items, OnDetailInteractionListener listener) {
@@ -56,6 +57,7 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
                 break;
         }
         holder.bindString(content);
+        holder.mContentView.setPressed(selectedPosition == position);
     }
 
     public void setDataset( SparseArray sparseArray ) {
@@ -88,6 +90,9 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
         public void onViewHolderClick() {
             if (null != mListener) {
                 mListener.onDetailInteractionListener(getAdapterPosition());
+                notifyItemChanged(selectedPosition);
+                selectedPosition = getLayoutPosition();
+                notifyItemChanged(selectedPosition);
             }
         }
     }

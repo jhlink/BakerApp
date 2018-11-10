@@ -6,5 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:layout_marginTop="@dimen/text_margin"
+    android:background="@drawable/detail_item_selector"
     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
     tools:text="Hello" />
