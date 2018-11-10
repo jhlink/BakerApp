@@ -12,7 +12,7 @@ public class ViewRecipeStepViewModel extends ViewModel {
     private LiveData<RecipeStep> recipeStepLiveData;
     private int recipeId;
 
-    public ViewRecipeStepViewModel(int recipeId) {
+    public ViewRecipeStepViewModel(int recipeId, int stepId) {
         recipeRepository = RecipeRepository.getExistingInstance();
         recipeStepLiveData = recipeRepository.getRecipeStep(recipeId, stepId);
     }
