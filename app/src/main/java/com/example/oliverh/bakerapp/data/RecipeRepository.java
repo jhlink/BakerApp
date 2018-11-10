@@ -125,6 +125,10 @@ public class RecipeRepository {
                 Transformations.map(recipeStepLiveData, new Function<RecipeStep, RepositoryResponse>() {
                     @Override
                     public RepositoryResponse apply(RecipeStep input) {
+                        if ( input == null) {
+                            Timber.e("Error: RecipeStep object doesn't exist");
+                            return new RepositoryResponse(new IOException("Object does not exist"));
+                        }
                         Timber.d("Queried Step: %s", input.toString());
                         return new RepositoryResponse(input);
                     }
