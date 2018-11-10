@@ -16,11 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.oliverh.bakerapp.R;
-import com.example.oliverh.bakerapp.SelectRecipeDetailsFragmentViewModel;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * A fragment representing a list of Items.
@@ -83,7 +84,7 @@ public class SelectRecipeDetailsFragment extends Fragment {
             recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            adapter = new SelectRecipeDetailsRecyclerViewAdapter(null, mListener);
+            adapter = new SelectRecipeDetailsRecyclerViewAdapter(new SparseArray(), mListener);
             recyclerView.setAdapter(adapter);
 
             mViewModel.getRecipeSteps().observe(this, new Observer<RepositoryResponse>() {
@@ -99,6 +100,7 @@ public class SelectRecipeDetailsFragment extends Fragment {
                             sparseArray.put(i, steps.get(i - 1));
                         }
                     }
+                    Timber.d("SparseArray Size: %d", sparseArray.size());
                     adapter.setDataset(sparseArray);
                     adapter.notifyDataSetChanged();
                     restorePosition();

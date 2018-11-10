@@ -65,7 +65,7 @@ public class SelectRecipe extends AppCompatActivity implements
 
         }
 
-//        initializeStetho();
+        initializeStetho();
     }
 
     private static void initializeTimber(){
