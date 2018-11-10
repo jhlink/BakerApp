@@ -102,6 +102,6 @@ public class SelectRecipeDetailsFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Implement Fragmentation interaction with RecipeSteps
         // TODO: Implement Fragmentation interaction with RecipeIngredients
-        void onListFragmentInteraction();
+        void onListFragmentInteraction(int position);
     }
 }

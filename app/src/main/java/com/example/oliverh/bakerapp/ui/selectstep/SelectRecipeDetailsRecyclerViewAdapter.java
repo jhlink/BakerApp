@@ -1,15 +1,23 @@
 package com.example.oliverh.bakerapp.ui.selectstep;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
+import com.example.oliverh.bakerapp.data.database.RecipeIngredient;
+import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment.OnListFragmentInteractionListener;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import timber.log.Timber;
 
 /**
  * {@link RecyclerView.Adapter} that can display a generic text description and makes a call to the
@@ -18,10 +26,10 @@ import java.util.List;
  */
 public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeDetailsRecyclerViewAdapter.RecipeDetailViewHolder> {
 
-    private final List<?> mValues;
+    private final SparseArray mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public SelectRecipeDetailsRecyclerViewAdapter(List<?> items, OnListFragmentInteractionListener listener) {
+    public SelectRecipeDetailsRecyclerViewAdapter(SparseArray items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -42,10 +50,13 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
         switch ( position ) {
             case 0:
                 // Pass 'Recipe Ingredients' static text to ViewHolder
+                String RecipeIngredient_ContentText = (String) mValues.get(0);
                 break;
 
             default:
                 // Pass 'Recipe Steps' text to ViewHolder.
+                RecipeStep step = (RecipeStep) mValues.get(0);
+                content = String.format("Recipe Step %d.", step.getStepIndex());
                 break;
         }
         holder.bindString(content);
@@ -57,15 +68,27 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
     }
 
     public class RecipeDetailViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mContentView;
+        @BindView(R.id.tv_generic_details_box) TextView mContentView;
 
         public RecipeDetailViewHolder(View view) {
             super(view);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            ButterKnife.bind(this, view);
+        }
+
+        public void logContent() {
+            Timber.d("Recipe Type: %s",
+                    mContentView.getText());
         }
 
         public void bindString(String content) {
+            mContentView.setText(content);
+        }
 
+        @OnClick(R.id.tv_generic_details_box)
+        public void onViewHolderClick() {
+            if (null != mListener) {
+                mListener.onListFragmentInteraction(getAdapterPosition());
+            }
         }
     }
 }
