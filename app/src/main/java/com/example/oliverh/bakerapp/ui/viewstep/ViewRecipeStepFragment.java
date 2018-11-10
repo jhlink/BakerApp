@@ -19,6 +19,8 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventListener {
 
     private ViewRecipeStepViewModel mViewModel;
+    private int mRecipeId;
+    private int mStepId;
 
     public static ViewRecipeStepFragment newInstance() {
         return new ViewRecipeStepFragment();
@@ -37,6 +39,15 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
         View view = inflater.inflate(R.layout.view_recipe_step_activity, container, false);
 
         return view;
+    }
+
+
+    public void setRecipeId(int id) {
+        this.mRecipeId = id;
+    }
+
+    public void setStepId(int id) {
+        this.mStepId = id;
     }
 
     @Override
