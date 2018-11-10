@@ -35,6 +35,9 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
         return new ViewHolder(view);
     }
 
+    //  It is assumed that the first element in the mValues position will be
+    //      RecipeIngredients 'Text', and the following elements are RecipeStep
+    //      instantiations.
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         String content = "";
