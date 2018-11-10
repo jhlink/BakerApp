@@ -11,7 +11,6 @@ public class ViewRecipeStepViewModel extends ViewModel {
     private LiveData<RepositoryResponse> recipeStepLiveData;
 
     public ViewRecipeStepViewModel(int recipeId, int stepId) {
-        // TODO: Implement the ViewModel
         RecipeRepository recipeRepository = RecipeRepository.getExistingInstance();
         recipeStepLiveData = recipeRepository.getRecipeStep(recipeId, stepId);
     }
