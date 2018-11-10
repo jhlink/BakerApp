@@ -411,4 +411,5 @@
       }
       ]}
     </string>
+  <string name="BUNDLE_RECIPE_ID">RECIPE_ID</string>
 </resources>
