@@ -116,6 +116,22 @@ public class RecipeRepository {
         return mediatorLiveDataRecipeList;
     }
 
+    public LiveData<RepositoryResponse>  getRecipeStep(final int recipeId, final int stepId) {
+        LiveData<RecipeStep> recipeStepLiveData = mRecipeStepDao.getRecipeStepByRecipeId(recipeId, stepId);
+
+        Timber.d("Requested Recipe Step List - Recipe ID: %d", recipeId);
+
+        LiveData<RepositoryResponse> result =
+                Transformations.map(recipeStepLiveData, new Function<RecipeStep, RepositoryResponse>() {
+                    @Override
+                    public RepositoryResponse apply(RecipeStep input) {
+                        return new RepositoryResponse(input);
+                    }
+                });
+
+        return result;
+    }
+
     public LiveData<RepositoryResponse> getRecipeSteps(final int recipeId) {
         LiveData<List<RecipeStep>> tRecipeSteps =  mRecipeStepDao.getRecipeStepsByRecipeId(recipeId);
 
