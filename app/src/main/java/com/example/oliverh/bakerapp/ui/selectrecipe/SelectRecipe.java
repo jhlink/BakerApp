@@ -2,6 +2,7 @@ package com.example.oliverh.bakerapp.ui.selectrecipe;
 
 import android.arch.persistence.room.Transaction;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.oliverh.bakerapp.R;
+import com.example.oliverh.bakerapp.SelectRecipeDetails;
 import com.example.oliverh.bakerapp.data.RecipeRepository;
 import com.example.oliverh.bakerapp.data.database.AppDatabase;
 import com.example.oliverh.bakerapp.data.database.Recipe;
@@ -85,5 +87,11 @@ public class SelectRecipe extends AppCompatActivity implements
     @Override
     public void onListFragmentInteraction(Recipe recipe) {
         Toast.makeText(this, recipe.getRecipeName(), Toast.LENGTH_SHORT).show();
+
+        final Intent intent = new Intent(this, SelectRecipeDetails.class);
+        int recipeId = recipe.getId();
+
+        intent.putExtra(getString(R.string.BUNDLE_RECIPE_ID), recipeId);
+        startActivity(intent);
     }
 }
