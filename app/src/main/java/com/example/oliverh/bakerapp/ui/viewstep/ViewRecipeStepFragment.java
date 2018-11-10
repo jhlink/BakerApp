@@ -18,12 +18,19 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 
 public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventListener {
 
+    private static final String ARGS_RECIPE_ID = "RECIPE_ID";
+    private static final String ARGS_STEP_ID = "STEP_ID";
     private ViewRecipeStepViewModel mViewModel;
     private int mRecipeId;
     private int mStepId;
 
-    public static ViewRecipeStepFragment newInstance() {
-        return new ViewRecipeStepFragment();
+    public static ViewRecipeStepFragment newInstance(int recipeId, int stepId ) {
+        ViewRecipeStepFragment fragment = new ViewRecipeStepFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARGS_RECIPE_ID, recipeId);
+        args.putInt(ARGS_STEP_ID, stepId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
