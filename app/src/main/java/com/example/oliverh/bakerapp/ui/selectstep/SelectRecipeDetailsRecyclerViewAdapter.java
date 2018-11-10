@@ -46,12 +46,12 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
         switch ( position ) {
             case 0:
                 // Pass 'Recipe Ingredients' static text to ViewHolder
-                String RecipeIngredient_ContentText = (String) mValues.get(0);
+                content = (String) mValues.get(0);
                 break;
 
             default:
                 // Pass 'Recipe Steps' text to ViewHolder.
-                RecipeStep step = (RecipeStep) mValues.get(0);
+                RecipeStep step = (RecipeStep) mValues.get(position);
                 content = String.format("Recipe Step %d.", step.getStepIndex());
                 break;
         }
