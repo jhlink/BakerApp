@@ -33,6 +33,8 @@ public class RepositoryResponse<T> {
         this.listOfData = listOfData;
     }
 
+    public T getObject() { return obj; }
+
     public Throwable getError() {
         return error;
     }
