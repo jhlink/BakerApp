@@ -4,6 +4,8 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,12 +31,14 @@ import java.util.List;
 public class SelectRecipeDetailsFragment extends Fragment {
 
     private static final String ARG_RECIPE_ID = "recipe-id";
+    private static final String RV_DETAILS_STATE_KEY = "RECIPE_DETAILS_STATE";
     private int recipeId = -1;
 
     private OnListFragmentInteractionListener mListener;
     private SelectRecipeDetailsRecyclerViewAdapter adapter;
     private SelectRecipeDetailsFragmentViewModel mViewModel;
     private RecyclerView recyclerView;
+    private Parcelable mSavedState;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -58,6 +62,10 @@ public class SelectRecipeDetailsFragment extends Fragment {
 
         if (getArguments() != null) {
             recipeId = getArguments().getInt(ARG_RECIPE_ID);
+        }
+
+        if (savedInstanceState != null) {
+            mSavedState = savedInstanceState.getParcelable(RV_DETAILS_STATE_KEY);
         }
 
         SelectRecipeDetailsFragmentViewModelFactory factory = new SelectRecipeDetailsFragmentViewModelFactory(recipeId);
@@ -93,10 +101,26 @@ public class SelectRecipeDetailsFragment extends Fragment {
                     }
                     adapter.setDataset(sparseArray);
                     adapter.notifyDataSetChanged();
+                    restorePosition();
                 }
             });
         }
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mSavedState = recyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(RV_DETAILS_STATE_KEY, mSavedState);
+    }
+
+    private void restorePosition() {
+        if (mSavedState != null) {
+            recyclerView.getLayoutManager().onRestoreInstanceState(mSavedState);
+            mSavedState = null;
+        }
     }
 
     public void setRecipeId(int recipeId) {
