@@ -27,7 +27,7 @@ public class SelectRecipeDetails extends AppCompatActivity {
             if (fragment == null) {
                 Timber.d("Create fragment.");
 
-                fragment = SelectRecipeDetailsFragment.newInstance(1);
+                fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
             } else {
                 Timber.d("Found fragment.");
             }

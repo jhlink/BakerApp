@@ -3,7 +3,6 @@ package com.example.oliverh.bakerapp.ui.selectstep;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.oliverh.bakerapp.R;
-import com.example.oliverh.bakerapp.ui.selectstep.dummy.DummyContent;
-import com.example.oliverh.bakerapp.ui.selectstep.dummy.DummyContent.DummyItem;
+import com.example.oliverh.bakerapp.data.database.RecipeStep;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,10 +23,8 @@ import java.util.List;
  */
 public class SelectRecipeDetailsFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+    private static final String ARG_RECIPE_ID = "recipe-id";
+    private int recipeId = -1;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -39,10 +36,10 @@ public class SelectRecipeDetailsFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static SelectRecipeDetailsFragment newInstance(int columnCount) {
+    public static SelectRecipeDetailsFragment newInstance(int recipeId) {
         SelectRecipeDetailsFragment fragment = new SelectRecipeDetailsFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putInt(ARG_RECIPE_ID, recipeId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,29 +49,28 @@ public class SelectRecipeDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            recipeId = getArguments().getInt(ARG_RECIPE_ID);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_selectrecipedetails_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_recipe_recycler_view, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new SelectRecipeDetailsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            //recyclerView.setAdapter(new SelectRecipeDetailsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
         return view;
     }
 
+    public void setRecipeId(int recipeId) {
+        this.recipeId = recipeId;
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -104,7 +100,8 @@ public class SelectRecipeDetailsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        // TODO: Implement Fragmentation interaction with RecipeSteps
+        // TODO: Implement Fragmentation interaction with RecipeIngredients
+        void onListFragmentInteraction();
     }
 }
