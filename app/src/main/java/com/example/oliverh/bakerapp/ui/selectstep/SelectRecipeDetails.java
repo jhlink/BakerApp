@@ -1,11 +1,12 @@
-package com.example.oliverh.bakerapp;
+package com.example.oliverh.bakerapp.ui.selectstep;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment;
+
+import com.example.oliverh.bakerapp.R;
 
 import timber.log.Timber;
 
