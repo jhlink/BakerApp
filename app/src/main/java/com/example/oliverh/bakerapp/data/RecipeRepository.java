@@ -54,6 +54,8 @@ public class RecipeRepository {
             @Override
             public void run() {
                 mRecipeDao.nukeTable();
+                mRecipeStepDao.nukeTable();
+                mRecipeIngredientDao.nukeTable();
             }
         });
 
@@ -114,34 +116,16 @@ public class RecipeRepository {
         return mediatorLiveDataRecipeList;
     }
 
-    public LiveData<RepositoryResponse> getRecipe(int recipeId) {
-        LiveData<Recipe> recipe = mRecipeDao.getRecipeById(recipeId);
-
-        final List<RecipeStep> tRecipeSteps =  mRecipeStepDao.getRecipeStepsByRecipeId(recipeId);
-        final List<RecipeIngredient> tRecipeIngredients = mRecipeIngredientDao.getRecipeIngredientsById(recipeId);
-
-        LiveData<RepositoryResponse> result =
-            Transformations.map(recipe, new Function<Recipe, RepositoryResponse>() {
-                @Override
-                public RepositoryResponse apply(Recipe input) {
-                    input.setIngredients(tRecipeIngredients);
-                    input.setSteps(tRecipeSteps);
-                    return new RepositoryResponse(input);
-                }
-            });
-
-        return result;
-    }
-
     public LiveData<RepositoryResponse> getRecipeSteps(final int recipeId) {
-        LiveData<List<RecipeStep>> stepLiveData = new MediatorLiveData<>();
+        LiveData<List<RecipeStep>> tRecipeSteps =  mRecipeStepDao.getRecipeStepsByRecipeId(recipeId);
+
+        Timber.d("Requested Recipe Step List - Recipe ID: %d", recipeId);
 
         LiveData<RepositoryResponse> result =
-                Transformations.map(stepLiveData, new Function<List<RecipeStep>, RepositoryResponse>() {
+                Transformations.map(tRecipeSteps, new Function<List<RecipeStep>, RepositoryResponse>() {
                     @Override
                     public RepositoryResponse apply(List<RecipeStep> input) {
-                        List<RecipeStep> tRecipeSteps =  mRecipeStepDao.getRecipeStepsByRecipeId(recipeId);
-                        return new RepositoryResponse(tRecipeSteps);
+                        return new RepositoryResponse(input);
                     }
                 });
 
@@ -149,14 +133,13 @@ public class RecipeRepository {
     }
 
     public LiveData<RepositoryResponse> getRecipeIngredients(final int recipeId) {
-        LiveData<List<RecipeIngredient>> ingredientLiveData = new MediatorLiveData<>();
+        LiveData<List<RecipeIngredient>> ingredientLiveData = mRecipeIngredientDao.getRecipeIngredientsById(recipeId);
 
         LiveData<RepositoryResponse> result =
                 Transformations.map(ingredientLiveData, new Function<List<RecipeIngredient>, RepositoryResponse>() {
                     @Override
                     public RepositoryResponse apply(List<RecipeIngredient> input) {
-                        List<RecipeIngredient> tRecipeIngredients = mRecipeIngredientDao.getRecipeIngredientsById(recipeId);
-                        return new RepositoryResponse(tRecipeIngredients);
+                        return new RepositoryResponse(input);
                     }
                 });
 
