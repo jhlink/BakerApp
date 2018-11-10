@@ -21,6 +21,7 @@ public class SelectRecipe extends AppCompatActivity implements
 
     private static final String RECIPE_LIST_FRAGMENT_TAG = "RECIPE_LIST_FRAG_TAG";
     private static final int TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.tablet_recipe_collection_container;
+    private static final int LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.land_recipe_collection_container;
     private static final int RECIPE_COLLECTION_CONTAINER_ID = R.id.recipe_collection_container;
 
     @Override
@@ -30,11 +31,12 @@ public class SelectRecipe extends AppCompatActivity implements
 
         initializeTimber();
 
+
         if (savedInstanceState == null) {
 
             // TODO: Properly handle this.
-            SelectRecipeFragment fragment = (SelectRecipeFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_LIST_FRAGMENT_TAG);
 
+            SelectRecipeFragment fragment = (SelectRecipeFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_LIST_FRAGMENT_TAG);
             if (fragment == null) {
                 Timber.d("Create fragment.");
 
@@ -53,6 +55,15 @@ public class SelectRecipe extends AppCompatActivity implements
                         .commitNow();
             } else {
                 Timber.d("Found fragment.");
+            }
+        } else {
+            if ( this.findViewById(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID) != null ) {
+                Fragment fragment = SelectRecipeFragment.newInstance(2);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID,
+                                fragment,
+                                RECIPE_LIST_FRAGMENT_TAG)
+                        .commitNow();
             }
 
         }
