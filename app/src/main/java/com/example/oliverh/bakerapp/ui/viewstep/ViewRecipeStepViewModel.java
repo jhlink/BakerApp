@@ -5,19 +5,18 @@ import android.arch.lifecycle.ViewModel;
 
 import com.example.oliverh.bakerapp.data.RecipeRepository;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
+import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
 public class ViewRecipeStepViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
-    private RecipeRepository recipeRepository;
-    private LiveData<RecipeStep> recipeStepLiveData;
-    private int recipeId;
+    private LiveData<RepositoryResponse> recipeStepLiveData;
 
     public ViewRecipeStepViewModel(int recipeId, int stepId) {
-        recipeRepository = RecipeRepository.getExistingInstance();
+        // TODO: Implement the ViewModel
+        RecipeRepository recipeRepository = RecipeRepository.getExistingInstance();
         recipeStepLiveData = recipeRepository.getRecipeStep(recipeId, stepId);
     }
 
-    public LiveData<RecipeStep> getRecipeStep() {
+    public LiveData<RepositoryResponse> getRecipeStep() {
         return recipeStepLiveData;
     }
 }
