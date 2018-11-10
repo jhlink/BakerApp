@@ -16,12 +16,10 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeDetailsRecyclerViewAdapter.ViewHolder> {
+public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeDetailsRecyclerViewAdapter.RecipeDetailViewHolder> {
 
     private final List<?> mValues;
     private final OnListFragmentInteractionListener mListener;
-    private static final int INGREDIENTS_VIEW_TYPE = 1;
-    private static final int STEPS_VIEW_TYPE = 2;
 
     public SelectRecipeDetailsRecyclerViewAdapter(List<?> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -29,17 +27,17 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecipeDetailViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recipe_details_list_item, parent, false);
-        return new ViewHolder(view);
+        return new RecipeDetailViewHolder(view);
     }
 
     //  It is assumed that the first element in the mValues position will be
     //      RecipeIngredients 'Text', and the following elements are RecipeStep
     //      instantiations.
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecipeDetailViewHolder holder, int position) {
         String content = "";
         switch ( position ) {
             case 0:
@@ -58,13 +56,11 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+    public class RecipeDetailViewHolder extends RecyclerView.ViewHolder {
         public final TextView mContentView;
 
-        public ViewHolder(View view) {
+        public RecipeDetailViewHolder(View view) {
             super(view);
-            mView = view;
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 
