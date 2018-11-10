@@ -115,6 +115,12 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+        mMediaSession.setActive(false);
+    }
 
     public void setRecipeId(int id) {
         this.mRecipeId = id;
@@ -142,6 +148,12 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
         }
+    }
+
+    private void releasePlayer() {
+        mExoPlayer.stop();
+        mExoPlayer.release();
+        mExoPlayer = null;
     }
 
     private MediaSource buildMediaSource(Uri uri) {
