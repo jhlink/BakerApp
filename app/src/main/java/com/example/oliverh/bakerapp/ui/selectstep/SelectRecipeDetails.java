@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-
 import com.example.oliverh.bakerapp.R;
 
 import timber.log.Timber;
@@ -22,9 +21,6 @@ public class SelectRecipeDetails extends AppCompatActivity implements SelectReci
         int recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
 
         if (savedInstanceState == null) {
-
-            // TODO: Properly handle this.
-
             SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_DETAILS_FRAGMENT_TAG);
             if (fragment == null) {
                 Timber.d("Create fragment.");
