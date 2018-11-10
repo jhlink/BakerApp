@@ -37,7 +37,8 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(this).get(ViewRecipeStepViewModel.class);
+        ViewRecipeStepFragmentViewModelFactory factory = new ViewRecipeStepFragmentViewModelFactory(mRecipeId, mStepId);
+        mViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
     }
 
     @Override
