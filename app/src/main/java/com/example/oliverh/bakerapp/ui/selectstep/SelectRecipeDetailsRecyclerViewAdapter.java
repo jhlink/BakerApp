@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
-import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment.OnListFragmentInteractionListener;
+import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment.OnDetailInteractionListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,14 +18,14 @@ import timber.log.Timber;
 
 /**
  * {@link RecyclerView.Adapter} that can display a generic text description and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnDetailInteractionListener}.
  */
 public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SelectRecipeDetailsRecyclerViewAdapter.RecipeDetailViewHolder> {
 
     private SparseArray mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnDetailInteractionListener mListener;
 
-    public SelectRecipeDetailsRecyclerViewAdapter(SparseArray items, OnListFragmentInteractionListener listener) {
+    public SelectRecipeDetailsRecyclerViewAdapter(SparseArray items, OnDetailInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -87,7 +87,7 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
         @OnClick(R.id.tv_generic_details_box)
         public void onViewHolderClick() {
             if (null != mListener) {
-                mListener.onListFragmentInteraction(getAdapterPosition());
+                mListener.onDetailInteractionListener(getAdapterPosition());
             }
         }
     }

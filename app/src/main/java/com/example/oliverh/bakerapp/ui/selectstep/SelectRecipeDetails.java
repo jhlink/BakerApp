@@ -8,7 +8,7 @@ import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment;
 
 import timber.log.Timber;
 
-public class SelectRecipeDetails extends AppCompatActivity {
+public class SelectRecipeDetails extends AppCompatActivity implements SelectRecipeDetailsFragment.OnDetailInteractionListener {
 
     public static final String RECIPE_DETAILS_FRAGMENT_TAG = "RECIPE_DETAILS_FRAGMENT";
 
@@ -39,5 +39,10 @@ public class SelectRecipeDetails extends AppCompatActivity {
                             RECIPE_DETAILS_FRAGMENT_TAG)
                     .commitNow();
         }
+    }
+
+    @Override
+    public void onDetailInteractionListener(int position) {
+
     }
 }

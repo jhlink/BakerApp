@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnDetailInteractionListener}
  * interface.
  */
 public class SelectRecipeDetailsFragment extends Fragment {
@@ -34,7 +34,7 @@ public class SelectRecipeDetailsFragment extends Fragment {
     private static final String RV_DETAILS_STATE_KEY = "RECIPE_DETAILS_STATE";
     private int recipeId = -1;
 
-    private OnListFragmentInteractionListener mListener;
+    private OnDetailInteractionListener mListener;
     private SelectRecipeDetailsRecyclerViewAdapter adapter;
     private SelectRecipeDetailsFragmentViewModel mViewModel;
     private RecyclerView recyclerView;
@@ -130,8 +130,8 @@ public class SelectRecipeDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnDetailInteractionListener) {
+            mListener = (OnDetailInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -154,7 +154,7 @@ public class SelectRecipeDetailsFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(int position);
+    public interface OnDetailInteractionListener {
+        void onDetailInteractionListener(int position);
     }
 }
