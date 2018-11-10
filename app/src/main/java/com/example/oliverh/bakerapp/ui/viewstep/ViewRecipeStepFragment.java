@@ -50,8 +50,10 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
     private static final String ARGS_RECIPE_ID = "RECIPE_ID";
     private static final String ARGS_STEP_ID = "STEP_ID";
     private static final String TAG = ViewRecipeStepFragment.class.getSimpleName();
+    private static MediaSessionCompat mMediaSession;
     private static final DefaultBandwidthMeter BANDWIDTH_METER =
             new DefaultBandwidthMeter();
+    private PlaybackStateCompat.Builder mStateBuilder;
     private SimpleExoPlayer mExoPlayer;
     private ViewRecipeStepViewModel mViewModel;
     private int mRecipeId;
@@ -92,6 +94,8 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
         final View view = inflater.inflate(R.layout.view_recipe_step_activity, container, false);
 
         ButterKnife.bind(this, view);
+
+        initializeMediaSession(view.getContext());
 
         mViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
             @Override
@@ -157,6 +161,36 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
         return videoSource;
     }
 
+
+    private void initializeMediaSession(Context context) {
+
+        // Create a MediaSessionCompat.
+        mMediaSession = new MediaSessionCompat(context, TAG);
+
+        // Enable callbacks from MediaButtons and TransportControls.
+        mMediaSession.setFlags(
+                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        // Do not let MediaButtons restart the player when the app is not visible.
+        mMediaSession.setMediaButtonReceiver(null);
+
+        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player.
+        mStateBuilder = new PlaybackStateCompat.Builder()
+                .setActions(
+                        PlaybackStateCompat.ACTION_PLAY |
+                                PlaybackStateCompat.ACTION_PAUSE |
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
+
+        mMediaSession.setPlaybackState(mStateBuilder.build());
+
+        // MySessionCallback has methods that handle callbacks from a media controller.
+        mMediaSession.setCallback(new MySessionCallback());
+
+        // Start the Media Session since the activity is active.
+        mMediaSession.setActive(true);
+    }
+
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
 
@@ -187,4 +221,20 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
 
     }
 
+    private class MySessionCallback extends MediaSessionCompat.Callback {
+        @Override
+        public void onPlay() {
+            mExoPlayer.setPlayWhenReady(true);
+        }
+
+        @Override
+        public void onPause() {
+            mExoPlayer.setPlayWhenReady(false);
+        }
+
+        @Override
+        public void onSkipToPrevious() {
+            mExoPlayer.seekTo(0);
+        }
+    }
 }
