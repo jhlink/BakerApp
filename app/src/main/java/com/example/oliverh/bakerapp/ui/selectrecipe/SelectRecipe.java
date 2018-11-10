@@ -20,6 +20,8 @@ public class SelectRecipe extends AppCompatActivity implements
         SelectRecipeFragment.OnListFragmentInteractionListener {
 
     private static final String RECIPE_LIST_FRAGMENT_TAG = "RECIPE_LIST_FRAG_TAG";
+    private static final int TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.tablet_recipe_collection_container;
+    private static final int RECIPE_COLLECTION_CONTAINER_ID = R.id.recipe_collection_container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,6 @@ public class SelectRecipe extends AppCompatActivity implements
         setContentView(R.layout.select_recipe_activity);
 
         initializeTimber();
-
 
         if (savedInstanceState == null) {
 
@@ -37,24 +38,19 @@ public class SelectRecipe extends AppCompatActivity implements
             if (fragment == null) {
                 Timber.d("Create fragment.");
 
-                if ( this.findViewById(R.id.tablet_recipe_collection_container) != null ) {
-                    fragment = SelectRecipeFragment.newInstance(3);
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.tablet_recipe_collection_container,
-                                    fragment,
-                                    RECIPE_LIST_FRAGMENT_TAG)
-                            .commitNow();
-                } else {
-                    fragment = SelectRecipeFragment.newInstance();
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.recipe_collection_container,
-                                    fragment,
-                                    RECIPE_LIST_FRAGMENT_TAG)
-                            .commitNow();
+                int columnSpan = 1;
+                int targetContainerID = RECIPE_COLLECTION_CONTAINER_ID;
+                if ( this.findViewById(TABLET_RECIPE_COLLECTION_CONTAINER_ID) != null ) {
+                    columnSpan = 3;
+                    targetContainerID = TABLET_RECIPE_COLLECTION_CONTAINER_ID;
                 }
 
-
-
+                fragment = SelectRecipeFragment.newInstance(columnSpan);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(targetContainerID,
+                                fragment,
+                                RECIPE_LIST_FRAGMENT_TAG)
+                        .commitNow();
             } else {
                 Timber.d("Found fragment.");
             }
