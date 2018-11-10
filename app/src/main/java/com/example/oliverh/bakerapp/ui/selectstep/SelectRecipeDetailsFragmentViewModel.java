@@ -1,4 +1,4 @@
-package com.example.oliverh.bakerapp;
+package com.example.oliverh.bakerapp.ui.selectstep;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;

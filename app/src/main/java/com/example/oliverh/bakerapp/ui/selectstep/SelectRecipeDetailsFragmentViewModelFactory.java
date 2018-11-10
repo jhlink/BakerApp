@@ -3,8 +3,6 @@ package com.example.oliverh.bakerapp.ui.selectstep;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import com.example.oliverh.bakerapp.SelectRecipeDetailsFragmentViewModel;
-
 public class SelectRecipeDetailsFragmentViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private final int mRecipeId;
 
