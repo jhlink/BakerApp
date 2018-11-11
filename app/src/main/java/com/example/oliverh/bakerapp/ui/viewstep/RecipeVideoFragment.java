@@ -43,7 +43,7 @@ import timber.log.Timber;
 public class RecipeVideoFragment extends Fragment implements Player.EventListener {
 
     private static final String ARGS_VIDEO_URL = "RECIPE_VIDEO_URL";
-    private static final String TAG = ViewRecipeStepFragment.class.getSimpleName();
+    private static final String TAG = RecipeVideoFragment.class.getSimpleName();
     private static MediaSessionCompat mMediaSession;
     private static final DefaultBandwidthMeter BANDWIDTH_METER =
             new DefaultBandwidthMeter();
