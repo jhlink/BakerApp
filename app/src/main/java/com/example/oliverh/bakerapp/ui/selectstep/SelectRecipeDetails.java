@@ -14,6 +14,8 @@ import timber.log.Timber;
 public class SelectRecipeDetails extends AppCompatActivity implements SelectRecipeDetailsFragment.OnDetailInteractionListener {
 
     public static final String RECIPE_DETAILS_FRAGMENT_TAG = "RECIPE_DETAILS_FRAGMENT";
+    private static final int LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.land_recipe_collection_container;
+    private static final int RECIPE_COLLECTION_CONTAINER_ID = R.id.recipe_collection_container;
     private int recipeId;
 
     @Override
@@ -35,10 +37,19 @@ public class SelectRecipeDetails extends AppCompatActivity implements SelectReci
 
             fragment.setRecipeId(recipeId);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recipe_collection_container,
+                    .replace(RECIPE_COLLECTION_CONTAINER_ID,
                             fragment,
                             RECIPE_DETAILS_FRAGMENT_TAG)
                     .commitNow();
+        } else {
+            if (this.findViewById(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID) != null) {
+                SelectRecipeDetailsFragment fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID,
+                                fragment,
+                                RECIPE_DETAILS_FRAGMENT_TAG)
+                        .commitNow();
+            }
         }
     }
 
