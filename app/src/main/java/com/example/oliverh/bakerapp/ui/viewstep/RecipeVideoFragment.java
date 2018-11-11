@@ -21,10 +21,10 @@ import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashChunkSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -50,18 +50,23 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     private PlaybackStateCompat.Builder mStateBuilder;
     private SimpleExoPlayer mExoPlayer;
     private String mVideoUrl;
-    private boolean landscape_videoFullScreen = false;
-
 
     @BindView(R.id.recipePlayerView)
     @Nullable
     PlayerView playerView;
 
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    public RecipeVideoFragment() {
+    }
+
+
     public static RecipeVideoFragment newInstance(String videoUrl) {
         Bundle args = new Bundle();
 
         RecipeVideoFragment fragment = new RecipeVideoFragment();
-
         args.putString(ARGS_VIDEO_URL, videoUrl);
         fragment.setArguments(args);
         return fragment;
@@ -84,14 +89,24 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipe_video_view, container, false);
 
-        ButterKnife.bind(this, view);
+        if (view instanceof PlayerView) {
+            ButterKnife.bind(this, view);
 
-        initializeMediaSession(view.getContext());
+            initializeMediaSession(view.getContext());
+            initializePlayer(view.getContext());
 
-        landscape_videoFullScreen = view.findViewById(R.id.land_recipePlayerView) != null;
-        initializePlayer(view.getContext(), mVideoUrl);
+            if (mVideoUrl == null) {
+                Timber.d("No Video Exist ");
+            }
+        }
 
         return view;
+    }
+
+    public void setAndInitializePlayer(Bundle bundle) {
+        this.setArguments(bundle);
+        mVideoUrl = bundle.getString(ARGS_VIDEO_URL);
+        createAndSetMediaSource();
     }
 
     @Override
@@ -101,7 +116,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         mMediaSession.setActive(false);
     }
 
-    private void initializePlayer(Context context, String mediaUri) {
+    private void initializePlayer(Context context) {
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
             TrackSelection.Factory adaptiveTrackSelectFactor = new AdaptiveTrackSelection.Factory();
@@ -117,8 +132,20 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
             // Set the ExoPlayer.EventListener to this activity.
             mExoPlayer.addListener(this);
 
+            createAndSetMediaSource();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(ARGS_VIDEO_URL, mVideoUrl);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void createAndSetMediaSource() {
+        if (mVideoUrl != null) {
             // Prepare the MediaSource.
-            Uri uri = Uri.parse(mediaUri);
+            Uri uri = Uri.parse(mVideoUrl);
             MediaSource mediaSource = buildMediaSource(uri);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
@@ -140,7 +167,11 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
                 new DefaultDashChunkSource.Factory(
                         new DefaultHttpDataSourceFactory("ua", BANDWIDTH_METER));
 
-        return new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(uri);
+        //new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(uri);
+
+        return new ExtractorMediaSource.Factory(
+                new DefaultHttpDataSourceFactory("ua")).
+                createMediaSource(uri);
 
     }
 
