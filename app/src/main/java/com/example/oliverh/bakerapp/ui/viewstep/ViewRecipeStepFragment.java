@@ -110,7 +110,6 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
             }
         });
 
-
         return view;
     }
 
@@ -164,11 +163,8 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
                 new DefaultDashChunkSource.Factory(
                         new DefaultHttpDataSourceFactory("ua", BANDWIDTH_METER));
 
-        ExtractorMediaSource videoSource =
-                new ExtractorMediaSource(uri, manifestDataSourceFactory, extractorsFactory,
-                        null, null);
-
-        return videoSource;
+        return new ExtractorMediaSource(uri, manifestDataSourceFactory, extractorsFactory,
+                null, null);
     }
 
 
@@ -190,6 +186,7 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
                         PlaybackStateCompat.ACTION_PLAY |
                                 PlaybackStateCompat.ACTION_PAUSE |
                                 PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE);
 
         mMediaSession.setPlaybackState(mStateBuilder.build());
@@ -218,7 +215,14 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+        if ((playbackState == ExoPlayer.STATE_READY) && playWhenReady) {
+            mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
+                    mExoPlayer.getCurrentPosition(), 1f);
+        } else if ((playbackState == ExoPlayer.STATE_READY)) {
+            mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
+                    mExoPlayer.getCurrentPosition(), 1f);
+        }
+        mMediaSession.setPlaybackState(mStateBuilder.build());
     }
 
     @Override
@@ -245,6 +249,12 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
         @Override
         public void onSkipToPrevious() {
             mExoPlayer.seekTo(0);
+        }
+
+        @Override
+        public void onSkipToNext() {
+            long seekNext = mExoPlayer.getCurrentPosition() + 5;
+            mExoPlayer.seekTo(seekNext);
         }
     }
 }
