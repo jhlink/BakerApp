@@ -21,7 +21,7 @@ import timber.log.Timber;
 public class ViewRecipeStep extends AppCompatActivity {
 
     public static final String RECIPE_VIDEO_FRAGMENT_TAG = "RECIPE_DETAILS_FRAGMENT";
-    private static final int LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.land_recipe_collection_container;
+    private static final int FULLSCREEN_CONTAINER_ID = R.id.full_video_view_screen;
 
     private boolean landscape_videoFullScreen = false;
     private ViewRecipeStepViewModel mViewModel;
@@ -38,7 +38,6 @@ public class ViewRecipeStep extends AppCompatActivity {
     @Nullable
     Button nextStepButton;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,44 +45,60 @@ public class ViewRecipeStep extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        //  Retrieve passed Activity data
         int recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
         int stepId = getIntent().getIntExtra(getString(R.string.BUNDLE_STEP_ID), -1);
-        landscape_videoFullScreen = findViewById(R.id.full_video_view_screen) != null;
 
+        //  Query if orientation = landscape
+        landscape_videoFullScreen = findViewById(FULLSCREEN_CONTAINER_ID) != null;
+
+        //  Initialize ViewModel members
         ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
         mViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
+
 
         mViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
             @Override
             public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+
                 if (repositoryResponse.getError() != null) {
                     Timber.d(repositoryResponse.getError());
                     return;
                 }
+
                 RecipeStep recipeStep = (RecipeStep) repositoryResponse.getObject();
+
+                // Check if we're in landscape state
                 if (!landscape_videoFullScreen) {
                     recipeStepHeader.setText(String.format("Step %d", recipeStep.getStepIndex() + 1));
                     recipeStepDescription.setText(recipeStep.getDescription());
                 }
 
-                if (recipeStep.getVideoUrl() != null) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("RECIPE_VIDEO_URL", recipeStep.getVideoUrl());
-                    RecipeVideoFragment fragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(R.id.recipePlayerViewFragment);
-                    if (landscape_videoFullScreen) {
-                        fragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(R.id.full_video_view_screen);
-                        hide();
-
-                    }
-                    fragment.setArguments(bundle);
-                    fragment.setAndInitializePlayer(bundle);
-                }
+                handleVideoUrl(recipeStep.getVideoUrl());
             }
         });
     }
 
-    private void hide() {
-        if (findViewById(R.id.full_video_view_screen) == null) {
+    private void handleVideoUrl(String url) {
+        // Check if videoUrl is null
+        if (url != null) {
+            RecipeVideoFragment fragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(R.id.recipePlayerViewFragment);
+
+            if (landscape_videoFullScreen) {
+                fragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(FULLSCREEN_CONTAINER_ID);
+                hide(FULLSCREEN_CONTAINER_ID);
+            }
+
+            Bundle bundle = new Bundle();
+            bundle.putString(getString(R.string.VIDEO_FRAG_ARGS), url);
+            fragment.setArguments(bundle);
+            fragment.setAndInitializePlayer(bundle);
+        }
+
+    }
+
+    private void hide(int viewContainerId) {
+        if (findViewById(viewContainerId) == null) {
             return;
         }
 
@@ -92,7 +107,7 @@ public class ViewRecipeStep extends AppCompatActivity {
             actionBar.hide();
         }
 
-        findViewById(R.id.full_video_view_screen).setSystemUiVisibility(
+        findViewById(viewContainerId).setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LOW_PROFILE
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -100,6 +115,4 @@ public class ViewRecipeStep extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
-
-
 }

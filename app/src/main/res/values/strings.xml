@@ -414,4 +414,5 @@
   <string name="BUNDLE_RECIPE_ID">RECIPE_ID</string>
     <string name="next_step">Next Step</string>
     <string name="BUNDLE_STEP_ID">STEP_ID</string>
+  <string name="VIDEO_FRAG_ARGS">RECIPE_VIDEO_URL</string>
 </resources>
