@@ -57,17 +57,26 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
     private ViewRecipeStepViewModel mViewModel;
     private int mRecipeId;
     private int mStepId;
+    private boolean landscape_videoFullScreen = false;
 
     @BindView(R.id.recipePlayerView)
+    @Nullable
     SimpleExoPlayerView playerView;
 
+    @BindView(R.id.land_recipePlayerView)
+    @Nullable
+    SimpleExoPlayerView fullPlayerView;
+
     @BindView(R.id.tv_recipeStepHeader)
+    @Nullable
     TextView recipeStepHeader;
 
     @BindView(R.id.tv_recipeStepDesc)
+    @Nullable
     TextView recipeStepDescription;
 
     @BindView(R.id.btn_nextStep)
+    @Nullable
     Button nextStepButton;
 
     public static ViewRecipeStepFragment newInstance(int recipeId, int stepId ) {
@@ -83,8 +92,12 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ViewRecipeStepFragmentViewModelFactory factory = new ViewRecipeStepFragmentViewModelFactory(mRecipeId, mStepId);
-        mViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
+        if (getArguments() != null) {
+            mRecipeId = getArguments().getInt(ARGS_RECIPE_ID);
+            mStepId = getArguments().getInt(ARGS_STEP_ID);
+
+            Timber.d("Loading variables from savedInstanceState Bundle: R_id - %d, S_id - %d", mRecipeId, mStepId);
+        }
     }
 
     @Override
@@ -96,6 +109,10 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
 
         initializeMediaSession(view.getContext());
 
+        landscape_videoFullScreen = view.findViewById(R.id.land_recipePlayerView) != null;
+
+        ViewRecipeStepFragmentViewModelFactory factory = new ViewRecipeStepFragmentViewModelFactory(mRecipeId, mStepId);
+        mViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
         mViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
             @Override
             public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
@@ -104,8 +121,11 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
                     return;
                 }
                 RecipeStep recipeStep = (RecipeStep) repositoryResponse.getObject();
-                recipeStepHeader.setText(String.format("Step %d", recipeStep.getStepIndex() + 1));
-                recipeStepDescription.setText(recipeStep.getDescription());
+                if (!landscape_videoFullScreen) {
+                    recipeStepHeader.setText(String.format("Step %d", recipeStep.getStepIndex() + 1));
+                    recipeStepDescription.setText(recipeStep.getDescription());
+                }
+
                 initializePlayer(view.getContext(), recipeStep.getVideoUrl());
             }
         });
@@ -134,7 +154,12 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
-            playerView.setPlayer(mExoPlayer);
+
+            if (landscape_videoFullScreen) {
+                fullPlayerView.setPlayer(mExoPlayer);
+            } else {
+                playerView.setPlayer(mExoPlayer);
+            }
 
             // Set the ExoPlayer.EventListener to this activity.
             mExoPlayer.addListener(this);
@@ -148,9 +173,11 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
     }
 
     private void releasePlayer() {
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if (mExoPlayer != null) {
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     private MediaSource buildMediaSource(Uri uri) {

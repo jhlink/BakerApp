@@ -11,6 +11,7 @@ import timber.log.Timber;
 public class ViewRecipeStep extends AppCompatActivity {
 
     public static final String VIEW_RECIPE_STEP_FRAGMENT_TAG = "RECIPE_DETAILS_FRAGMENT";
+    private static final int LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.land_recipe_collection_container;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +37,15 @@ public class ViewRecipeStep extends AppCompatActivity {
                             fragment,
                             VIEW_RECIPE_STEP_FRAGMENT_TAG)
                     .commitNow();
+        } else {
+            if (this.findViewById(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID) != null) {
+                ViewRecipeStepFragment fragment = ViewRecipeStepFragment.newInstance(recipeId, stepId);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID,
+                                fragment,
+                                VIEW_RECIPE_STEP_FRAGMENT_TAG)
+                        .commitNow();
+            }
         }
     }
 }
