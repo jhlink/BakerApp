@@ -39,7 +39,6 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -142,7 +141,6 @@ public class ViewRecipeStepFragment extends Fragment implements ExoPlayer.EventL
             mExoPlayer.addListener(this);
 
             // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(context, "BakerApp");
             Uri uri = Uri.parse(mediaUri);
             MediaSource mediaSource = buildMediaSource(uri);
             mExoPlayer.prepare(mediaSource);
