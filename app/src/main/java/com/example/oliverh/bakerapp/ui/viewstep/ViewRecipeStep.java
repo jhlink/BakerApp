@@ -56,11 +56,9 @@ public class ViewRecipeStep extends AppCompatActivity {
         ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
         mViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
 
-
         mViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
             @Override
             public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
-
                 if (repositoryResponse.getError() != null) {
                     Timber.d(repositoryResponse.getError());
                     return;
@@ -86,7 +84,7 @@ public class ViewRecipeStep extends AppCompatActivity {
 
             if (landscape_videoFullScreen) {
                 fragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(FULLSCREEN_CONTAINER_ID);
-                hide(FULLSCREEN_CONTAINER_ID);
+                hide();
             }
 
             Bundle bundle = new Bundle();
@@ -97,8 +95,8 @@ public class ViewRecipeStep extends AppCompatActivity {
 
     }
 
-    private void hide(int viewContainerId) {
-        if (findViewById(viewContainerId) == null) {
+    private void hide() {
+        if (findViewById(FULLSCREEN_CONTAINER_ID) == null) {
             return;
         }
 
@@ -107,7 +105,7 @@ public class ViewRecipeStep extends AppCompatActivity {
             actionBar.hide();
         }
 
-        findViewById(viewContainerId).setSystemUiVisibility(
+        findViewById(FULLSCREEN_CONTAINER_ID).setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LOW_PROFILE
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
