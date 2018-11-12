@@ -7,43 +7,26 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class ViewRecipeStep extends AppCompatActivity {
+public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepText.OnFragmentInteractionListener {
 
-    public static final String RECIPE_VIDEO_FRAGMENT_TAG = "RECIPE_DETAILS_FRAGMENT";
     private static final int FULLSCREEN_CONTAINER_ID = R.id.full_video_view_screen;
 
     private boolean landscape_videoFullScreen = false;
     private ViewRecipeStepViewModel mViewModel;
 
-    @BindView(R.id.tv_recipeStepHeader)
-    @Nullable
-    TextView recipeStepHeader;
-
-    @BindView(R.id.tv_recipeStepDesc)
-    @Nullable
-    TextView recipeStepDescription;
-
-    @BindView(R.id.btn_nextStep)
-    @Nullable
-    Button nextStepButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_recipe_step_activity);
 
-        ButterKnife.bind(this);
 
         //  Retrieve passed Activity data
         int recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
@@ -68,14 +51,30 @@ public class ViewRecipeStep extends AppCompatActivity {
 
                 // Check if we're in landscape state
                 if (!landscape_videoFullScreen) {
-                    recipeStepHeader.setText(String.format("Step %d", recipeStep.getStepIndex() + 1));
-                    recipeStepDescription.setText(recipeStep.getDescription());
+                    String recipeStepHeader = String.format("Step %d", recipeStep.getStepIndex() + 1);
+                    String recipeDescription = recipeStep.getDescription();
+                    handleTextPayload(recipeStepHeader, recipeDescription);
                 }
 
                 handleVideoUrl(recipeStep.getVideoUrl());
             }
         });
     }
+
+    private void handleTextPayload(String header, String desc) {
+        String nullSafeHeader = header == null ? "" : header;
+        String nullSafeDesc = desc == null ? "" : desc;
+
+        Bundle bundle = new Bundle();
+        bundle.putString(ViewRecipeStepText.ARG_STEP_HEADER, nullSafeHeader);
+        bundle.putString(ViewRecipeStepText.ARG_STEP_DESC, nullSafeDesc);
+
+
+        ViewRecipeStepText fragment = (ViewRecipeStepText) getSupportFragmentManager().findFragmentById(R.id.recipeStepTextFragment);
+        fragment.setArguments(bundle);
+        fragment.updateFragmentUI();
+    }
+
 
     private void handleVideoUrl(String url) {
         // Check if videoUrl is null
@@ -92,7 +91,6 @@ public class ViewRecipeStep extends AppCompatActivity {
             fragment.setArguments(bundle);
             fragment.setAndInitializePlayer(bundle);
         }
-
     }
 
     private void hide() {
@@ -112,5 +110,10 @@ public class ViewRecipeStep extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    @Override
+    public void OnNextStepFragmentInteraction() {
+
     }
 }

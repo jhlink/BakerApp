@@ -1,14 +1,19 @@
 package com.example.oliverh.bakerapp.ui.viewstep;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,13 +24,19 @@ import com.example.oliverh.bakerapp.R;
  * create an instance of this fragment.
  */
 public class ViewRecipeStepText extends Fragment {
-    private static final String ARG_STEP_HEADER = "header";
-    private static final String ARG_STEP_DESC = "desc";
-
+    public static final String ARG_STEP_HEADER = "header";
+    public static final String ARG_STEP_DESC = "desc";
     private String mHeader;
     private String mDesc;
-
     private OnFragmentInteractionListener mListener;
+
+    @BindView(R.id.tv_recipeStepHeader)
+    @Nullable
+    TextView recipeStepHeader;
+
+    @BindView(R.id.tv_recipeStepDesc)
+    @Nullable
+    TextView recipeStepDescription;
 
     public ViewRecipeStepText() {
         // Required empty public constructor
@@ -61,13 +72,30 @@ public class ViewRecipeStepText extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_view_recipe_step_text, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_recipe_step_text, container, false);
+        ButterKnife.bind(this, view);
+
+        recipeStepHeader.setText(mHeader);
+        recipeStepDescription.setText(mDesc);
+
+        return view;
     }
 
     // TODO: Implement nextStep UI action
-    public void onButtonPressed(Uri uri) {
+    @OnClick(R.id.btn_nextStep)
+    public void onButtonPressed() {
         if (mListener != null) {
-            mListener.onNextStepFragmentInteraction(uri);
+            mListener.OnNextStepFragmentInteraction();
+        }
+    }
+
+    public void updateFragmentUI() {
+        if (getArguments() != null) {
+            mHeader = getArguments().getString(ARG_STEP_HEADER);
+            mDesc = getArguments().getString(ARG_STEP_DESC);
+
+            recipeStepHeader.setText(mHeader);
+            recipeStepDescription.setText(mDesc);
         }
     }
 
@@ -89,6 +117,6 @@ public class ViewRecipeStepText extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onNextStepFragmentInteraction(Uri uri);
+        void OnNextStepFragmentInteraction();
     }
 }
