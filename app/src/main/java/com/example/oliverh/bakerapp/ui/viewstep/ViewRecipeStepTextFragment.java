@@ -81,7 +81,6 @@ public class ViewRecipeStepTextFragment extends Fragment {
         return view;
     }
 
-    // TODO: Implement nextStep UI action
     @OnClick(R.id.btn_nextStep)
     public void onButtonPressed() {
         if (mListener != null) {

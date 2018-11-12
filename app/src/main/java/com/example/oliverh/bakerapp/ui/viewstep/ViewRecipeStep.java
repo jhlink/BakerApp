@@ -20,6 +20,8 @@ public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepT
 
     private boolean landscape_videoFullScreen = false;
     private ViewRecipeStepViewModel mViewModel;
+    private int recipeId;
+    private int stepId;
 
 
     @Override
@@ -29,8 +31,8 @@ public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepT
 
 
         //  Retrieve passed Activity data
-        int recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
-        int stepId = getIntent().getIntExtra(getString(R.string.BUNDLE_STEP_ID), -1);
+        recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
+        stepId = getIntent().getIntExtra(getString(R.string.BUNDLE_STEP_ID), -1);
 
         //  Query if orientation = landscape
         landscape_videoFullScreen = findViewById(FULLSCREEN_CONTAINER_ID) != null;
@@ -113,6 +115,7 @@ public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepT
 
     @Override
     public void OnNextStepFragmentInteraction() {
-
+        stepId++;
+        mViewModel.queryRecipe(recipeId, stepId);
     }
 }

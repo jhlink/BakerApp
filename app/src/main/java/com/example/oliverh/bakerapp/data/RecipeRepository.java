@@ -137,6 +137,7 @@ public class RecipeRepository {
                 if (recipeStep == null) {
                     Timber.e("Error: RecipeStep object doesn't exist");
                     repoResponse.postValue(new RepositoryResponse(new IOException("Object does not exist")));
+                    return;
                 }
 
                 Timber.d("Queried Step: %s", recipeStep.toString());
