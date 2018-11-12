@@ -41,17 +41,19 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
         @BindView(R.id.tv_select_recipe_servings) TextView tv_servingSize;
         @BindView(R.id.iv_select_recipe_image) ImageView iv_recipeImage;
         private Recipe mRecipe;
+        private OnListFragmentInteractionListener mvhListener;
 
-        public RecipeViewHolder(View view) {
+        public RecipeViewHolder(View view, OnListFragmentInteractionListener vhListener) {
             super(view);
             ButterKnife.bind(this, view);
+            mvhListener = vhListener;
         }
 
         public void logContent() {
             Timber.d("Recipe Name: %s, Servings: %s, ImageUrl: %s",
                     tv_recipeName.getText(),
                     tv_servingSize.getText(),
-                    iv_recipeImage.getDrawable()) ;
+                    iv_recipeImage.getDrawable());
         }
 
         public void bindData(Recipe recipe) {
@@ -72,8 +74,8 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
 
         @OnClick(R.id.cv_recipe_view)
         void onClickRecipeCard() {
-            if (null != mListener) {
-                mListener.onListFragmentInteraction(mRecipe);
+            if (null != mvhListener) {
+                mvhListener.onListFragmentInteraction(mRecipe);
             }
         }
     }
@@ -82,7 +84,7 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
     public RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recipe_cardview_item, parent, false);
-        return new RecipeViewHolder(view);
+        return new RecipeViewHolder(view, mListener);
     }
 
     @Override
