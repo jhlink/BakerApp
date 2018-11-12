@@ -18,12 +18,12 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ViewRecipeStepText.OnFragmentInteractionListener} interface
+ * {@link ViewRecipeStepTextFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ViewRecipeStepText#newInstance} factory method to
+ * Use the {@link ViewRecipeStepTextFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ViewRecipeStepText extends Fragment {
+public class ViewRecipeStepTextFragment extends Fragment {
     public static final String ARG_STEP_HEADER = "header";
     public static final String ARG_STEP_DESC = "desc";
     private String mHeader;
@@ -38,7 +38,7 @@ public class ViewRecipeStepText extends Fragment {
     @Nullable
     TextView recipeStepDescription;
 
-    public ViewRecipeStepText() {
+    public ViewRecipeStepTextFragment() {
         // Required empty public constructor
     }
 
@@ -48,10 +48,10 @@ public class ViewRecipeStepText extends Fragment {
      *
      * @param header Parameter 1.
      * @param desc   Parameter 2.
-     * @return A new instance of fragment ViewRecipeStepText.
+     * @return A new instance of fragment ViewRecipeStepTextFragment.
      */
-    public static ViewRecipeStepText newInstance(String header, String desc) {
-        ViewRecipeStepText fragment = new ViewRecipeStepText();
+    public static ViewRecipeStepTextFragment newInstance(String header, String desc) {
+        ViewRecipeStepTextFragment fragment = new ViewRecipeStepTextFragment();
         Bundle args = new Bundle();
         args.putString(ARG_STEP_HEADER, header);
         args.putString(ARG_STEP_DESC, desc);

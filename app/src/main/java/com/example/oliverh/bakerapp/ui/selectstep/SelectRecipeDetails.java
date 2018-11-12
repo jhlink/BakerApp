@@ -13,7 +13,7 @@ import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 import com.example.oliverh.bakerapp.ui.viewstep.RecipeVideoFragment;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStep;
-import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepText;
+import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepTextFragment;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepViewModel;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepViewModelFactory;
 
@@ -21,7 +21,7 @@ import timber.log.Timber;
 
 public class SelectRecipeDetails extends AppCompatActivity
         implements SelectRecipeDetailsFragment.OnDetailInteractionListener,
-                    ViewRecipeStepText.OnFragmentInteractionListener {
+        ViewRecipeStepTextFragment.OnFragmentInteractionListener {
 
     public static final String RECIPE_DETAILS_FRAGMENT_TAG = "RECIPE_DETAILS_FRAGMENT";
     private static final int LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID = R.id.land_recipe_detail_collection_container;
@@ -156,11 +156,11 @@ public class SelectRecipeDetails extends AppCompatActivity
         String nullSafeDesc = desc == null ? "" : desc;
 
         Bundle bundle = new Bundle();
-        bundle.putString(ViewRecipeStepText.ARG_STEP_HEADER, nullSafeHeader);
-        bundle.putString(ViewRecipeStepText.ARG_STEP_DESC, nullSafeDesc);
+        bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_HEADER, nullSafeHeader);
+        bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_DESC, nullSafeDesc);
 
 
-        ViewRecipeStepText fragment = (ViewRecipeStepText) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID);
+        ViewRecipeStepTextFragment fragment = (ViewRecipeStepTextFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID);
         fragment.updateFragmentUI(bundle);
     }
 

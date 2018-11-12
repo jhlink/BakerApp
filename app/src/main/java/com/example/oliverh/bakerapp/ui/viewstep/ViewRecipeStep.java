@@ -14,7 +14,7 @@ import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
 import timber.log.Timber;
 
-public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepText.OnFragmentInteractionListener {
+public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepTextFragment.OnFragmentInteractionListener {
 
     private static final int FULLSCREEN_CONTAINER_ID = R.id.full_video_view_screen;
 
@@ -66,11 +66,11 @@ public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepT
         String nullSafeDesc = desc == null ? "" : desc;
 
         Bundle bundle = new Bundle();
-        bundle.putString(ViewRecipeStepText.ARG_STEP_HEADER, nullSafeHeader);
-        bundle.putString(ViewRecipeStepText.ARG_STEP_DESC, nullSafeDesc);
+        bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_HEADER, nullSafeHeader);
+        bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_DESC, nullSafeDesc);
 
 
-        ViewRecipeStepText fragment = (ViewRecipeStepText) getSupportFragmentManager().findFragmentById(R.id.recipeStepTextFragment);
+        ViewRecipeStepTextFragment fragment = (ViewRecipeStepTextFragment) getSupportFragmentManager().findFragmentById(R.id.recipeStepTextFragment);
         fragment.updateFragmentUI(bundle);
     }
 

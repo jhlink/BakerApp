@@ -35,7 +35,7 @@
 
         <fragment
             android:id="@+id/tbl_recipeStepTextFrag"
-            android:name="com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepText"
+            android:name="com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepTextFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
