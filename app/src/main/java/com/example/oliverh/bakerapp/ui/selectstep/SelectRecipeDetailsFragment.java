@@ -61,6 +61,7 @@ public class SelectRecipeDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Timber.d("Before RecipeId: %d", recipeId);
         if (getArguments() != null) {
             recipeId = getArguments().getInt(ARG_RECIPE_ID);
         }
@@ -68,6 +69,9 @@ public class SelectRecipeDetailsFragment extends Fragment {
         if (savedInstanceState != null) {
             mSavedState = savedInstanceState.getParcelable(RV_DETAILS_STATE_KEY);
         }
+
+        Timber.d("After RecipeId: %d", recipeId);
+
 
         SelectRecipeDetailsFragmentViewModelFactory factory = new SelectRecipeDetailsFragmentViewModelFactory(recipeId);
         mViewModel = ViewModelProviders.of(this, factory).get(SelectRecipeDetailsFragmentViewModel.class);

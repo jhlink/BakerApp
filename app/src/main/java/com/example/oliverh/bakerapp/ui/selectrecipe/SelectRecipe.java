@@ -7,8 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.example.oliverh.bakerapp.R;
-import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetails;
 import com.example.oliverh.bakerapp.data.database.Recipe;
+import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetails;
 import com.facebook.stetho.Stetho;
 
 import timber.log.Timber;
@@ -85,6 +85,8 @@ public class SelectRecipe extends AppCompatActivity implements
 
         final Intent intent = new Intent(this, SelectRecipeDetails.class);
         int recipeId = recipe.getId();
+
+        Timber.d("Intent to pass to SelectRecipeDetails : %d", recipeId);
 
         intent.putExtra(getString(R.string.BUNDLE_RECIPE_ID), recipeId);
         startActivity(intent);
