@@ -4,8 +4,28 @@
     android:layout_height="match_parent">
 
     <fragment
+        android:id="@+id/tbl_recipeDetailsListFrag"
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:name="com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/tbl_recipeStepVideoFrag"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.example.oliverh.bakerapp.ui.viewstep.RecipeVideoFragment" />
+
+        <fragment
+            android:id="@+id/tbl_recipeStepTextFrag"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepText" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
