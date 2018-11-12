@@ -5,12 +5,14 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
+import com.example.oliverh.bakerapp.ui.viewingredients.ViewIngredientsFragment;
 import com.example.oliverh.bakerapp.ui.viewstep.RecipeVideoFragment;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStep;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepTextFragment;
@@ -46,6 +48,7 @@ public class SelectRecipeDetails extends AppCompatActivity
         recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
         isTablet = this.findViewById(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID) != null;
 
+        Timber.d("BackStack Count %d ", getSupportFragmentManager().getBackStackEntryCount());
 
         if (isTablet) {
             if (savedInstanceState == null) {
@@ -83,7 +86,7 @@ public class SelectRecipeDetails extends AppCompatActivity
 
                 fragment.setRecipeId(recipeId);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(RECIPE_DETAIL_COLLECTION_CONTAINER_ID,
+                        .add(RECIPE_DETAIL_COLLECTION_CONTAINER_ID,
                                 fragment,
                                 RECIPE_DETAILS_FRAGMENT_TAG)
                         .commitNow();
@@ -145,7 +148,20 @@ public class SelectRecipeDetails extends AppCompatActivity
             }
         } else {
             if (position == 0) {
-                Toast.makeText(this, "THIS WORKS! - " + String.valueOf(position), Toast.LENGTH_SHORT).show();
+                int containerId = RECIPE_DETAIL_COLLECTION_CONTAINER_ID;
+
+                boolean isLandscape = this.findViewById(LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID) != null;
+
+                if (isLandscape) {
+                    containerId = LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID;
+                }
+
+                ViewIngredientsFragment fragment = ViewIngredientsFragment.newInstance(recipeId);
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                        .replace(containerId, fragment);
+                fragmentTransaction.addToBackStack("TEST");
+                fragmentTransaction.commit();
             } else {
 
                 Intent intent = new Intent(this, ViewRecipeStep.class);
