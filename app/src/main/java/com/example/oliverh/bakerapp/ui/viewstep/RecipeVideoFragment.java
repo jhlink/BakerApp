@@ -104,9 +104,10 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     }
 
     public void setAndInitializePlayer(Bundle bundle) {
-        this.setArguments(bundle);
-        mVideoUrl = bundle.getString(ARGS_VIDEO_URL);
-        createAndSetMediaSource();
+        if (bundle != null) {
+            mVideoUrl = bundle.getString(ARGS_VIDEO_URL);
+            createAndSetMediaSource();
+        }
     }
 
     @Override
