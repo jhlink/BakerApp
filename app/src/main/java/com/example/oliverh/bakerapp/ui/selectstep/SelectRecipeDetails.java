@@ -1,7 +1,6 @@
 package com.example.oliverh.bakerapp.ui.selectstep;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,34 +38,36 @@ public class SelectRecipeDetails extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.master_recipe_step_list);
 
         recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
-
         isTablet = this.findViewById(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID) != null;
 
+
         if (isTablet) {
+            if (savedInstanceState == null) {
+                Timber.d("We are in Tablet mode w/ id: %d.", recipeId);
+                // Handle Master List Frag
+                SelectRecipeDetailsFragment masterListFrag = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID);
 
-            // Handle Master List Frag
-            SelectRecipeDetailsFragment masterListFrag = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID);
+                if (masterListFrag == null) {
+                    Timber.d("Create fragment.");
+                    masterListFrag = SelectRecipeDetailsFragment.newInstance(recipeId);
+                } else {
+                    Timber.d("Found fragment.");
+                    Bundle masterListFragBundle = new Bundle();
+                    masterListFragBundle.putInt(SelectRecipeDetailsFragment.ARG_RECIPE_ID, recipeId);
+                    masterListFrag.setRecipeId(recipeId);
+                }
 
-            if (masterListFrag == null) {
-                Timber.d("Create fragment.");
-
-                masterListFrag = SelectRecipeDetailsFragment.newInstance(recipeId);
-            } else {
-                Timber.d("Found fragment.");
-                masterListFrag.setRecipeId(recipeId);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID,
+                                masterListFrag,
+                                RECIPE_DETAILS_FRAGMENT_TAG)
+                        .commitNow();
             }
 
-            Bundle masterListFragBundle = new Bundle();
-            masterListFragBundle.putInt(SelectRecipeDetailsFragment.ARG_RECIPE_ID, recipeId);
-            masterListFrag.setArguments(masterListFragBundle);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID,
-                            masterListFrag,
-                            RECIPE_DETAILS_FRAGMENT_TAG)
-                    .commitNow();
         } else {
             if (savedInstanceState == null) {
                 SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_DETAILS_FRAGMENT_TAG);
@@ -98,6 +99,11 @@ public class SelectRecipeDetails extends AppCompatActivity
     }
 
     @Override
+    public void OnNextStepFragmentInteraction() {
+        Toast.makeText(this, "HOORRAAAAY", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onDetailInteractionListener(int position) {
         int stepId = position - 1;
         String recipeIdBundleTag = getString(R.string.BUNDLE_RECIPE_ID);
@@ -122,7 +128,6 @@ public class SelectRecipeDetails extends AppCompatActivity
                     handleVideoUrl(payload.getVideoUrl());
                 }
             });
-
         } else {
             if (position == 0) {
                 Toast.makeText(this, "THIS WORKS! - " + String.valueOf(position), Toast.LENGTH_SHORT).show();
@@ -148,10 +153,8 @@ public class SelectRecipeDetails extends AppCompatActivity
 
 
         ViewRecipeStepText fragment = (ViewRecipeStepText) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID);
-        fragment.setArguments(bundle);
-        fragment.updateFragmentUI();
+        fragment.updateFragmentUI(bundle);
     }
-
 
     private void handleVideoUrl(String url) {
         // Check if videoUrl is null
@@ -165,9 +168,5 @@ public class SelectRecipeDetails extends AppCompatActivity
         }
     }
 
-    @Override
-    public void OnNextStepFragmentInteraction() {
-        Toast.makeText(this, "HOORRAAAAY", Toast.LENGTH_SHORT).show();
-    }
 }
 

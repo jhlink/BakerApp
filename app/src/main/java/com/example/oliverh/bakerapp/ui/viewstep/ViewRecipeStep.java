@@ -71,8 +71,7 @@ public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepT
 
 
         ViewRecipeStepText fragment = (ViewRecipeStepText) getSupportFragmentManager().findFragmentById(R.id.recipeStepTextFragment);
-        fragment.setArguments(bundle);
-        fragment.updateFragmentUI();
+        fragment.updateFragmentUI(bundle);
     }
 
 

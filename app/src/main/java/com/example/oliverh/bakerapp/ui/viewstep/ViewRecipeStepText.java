@@ -89,10 +89,10 @@ public class ViewRecipeStepText extends Fragment {
         }
     }
 
-    public void updateFragmentUI() {
-        if (getArguments() != null) {
-            mHeader = getArguments().getString(ARG_STEP_HEADER);
-            mDesc = getArguments().getString(ARG_STEP_DESC);
+    public void updateFragmentUI(Bundle bundle) {
+        if (bundle != null) {
+            mHeader = bundle.getString(ARG_STEP_HEADER);
+            mDesc = bundle.getString(ARG_STEP_DESC);
 
             recipeStepHeader.setText(mHeader);
             recipeStepDescription.setText(mDesc);
