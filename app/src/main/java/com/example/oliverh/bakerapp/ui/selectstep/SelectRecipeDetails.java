@@ -14,44 +14,54 @@ import timber.log.Timber;
 public class SelectRecipeDetails extends AppCompatActivity implements SelectRecipeDetailsFragment.OnDetailInteractionListener {
 
     public static final String RECIPE_DETAILS_FRAGMENT_TAG = "RECIPE_DETAILS_FRAGMENT";
-    private static final int LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.land_recipe_collection_container;
-    private static final int RECIPE_COLLECTION_CONTAINER_ID = R.id.recipe_collection_container;
+    private static final int LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID = R.id.land_recipe_detail_collection_container;
+    private static final int RECIPE_DETAIL_COLLECTION_CONTAINER_ID = R.id.recipe_detail_collection_container;
+    private static final int TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID = R.id.tbl_recipeDetailsListFrag;
     private int recipeId;
+    private boolean isTablet = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.select_recipe_activity);
+        setContentView(R.layout.master_recipe_step_list);
 
         recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
 
-        if (savedInstanceState == null) {
-            SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_DETAILS_FRAGMENT_TAG);
-            if (fragment == null) {
-                Timber.d("Create fragment.");
+        isTablet = this.findViewById(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID) != null;
 
-                fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
-            } else {
-                Timber.d("Found fragment.");
-            }
+        if (isTablet) {
 
-            fragment.setRecipeId(recipeId);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(RECIPE_COLLECTION_CONTAINER_ID,
-                            fragment,
-                            RECIPE_DETAILS_FRAGMENT_TAG)
-                    .commitNow();
+
         } else {
-            if (this.findViewById(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID) != null) {
-                SelectRecipeDetailsFragment fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
+            if (savedInstanceState == null) {
+                SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_DETAILS_FRAGMENT_TAG);
+                if (fragment == null) {
+                    Timber.d("Create fragment.");
+
+                    fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
+                } else {
+                    Timber.d("Found fragment.");
+                }
+
+                fragment.setRecipeId(recipeId);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID,
+                        .replace(RECIPE_DETAIL_COLLECTION_CONTAINER_ID,
                                 fragment,
                                 RECIPE_DETAILS_FRAGMENT_TAG)
                         .commitNow();
+            } else {
+                if (this.findViewById(LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID) != null) {
+                    SelectRecipeDetailsFragment fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID,
+                                    fragment,
+                                    RECIPE_DETAILS_FRAGMENT_TAG)
+                            .commitNow();
+                }
             }
         }
     }
+
 
     @Override
     public void onDetailInteractionListener(int position) {
