@@ -90,4 +90,10 @@ public class RecipeIngredient {
         String compiled = String.format(Locale.ENGLISH, "RecipeId: %d, Ingredient: %s, Quantity: %.2f, Measurement: %s", recipeId, ingredient, quantity, measure);
         return compiled;
     }
+
+    public String toUIString() {
+        String compiled = String.format(Locale.ENGLISH, "%.2f %s, %s", quantity, measure, ingredient);
+        return compiled;
+    }
+
 }

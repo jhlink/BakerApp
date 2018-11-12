@@ -13,7 +13,6 @@ import com.example.oliverh.bakerapp.data.database.Recipe;
 import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipeFragment.OnListFragmentInteractionListener;
 import com.squareup.picasso.Picasso;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,5 +102,4 @@ public class SelectRecipeRecyclerViewAdapter extends RecyclerView.Adapter<Select
     public int getItemCount() {
         return mValues.size();
     }
-
 }
