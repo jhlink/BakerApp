@@ -113,32 +113,36 @@ public class SelectRecipeDetails extends AppCompatActivity
         String stepIdBundleTag = getString(R.string.BUNDLE_STEP_ID);
 
         if (isTablet) {
-            Timber.d("RecipeId: %d, StepId: %d", recipeId, stepId);
-            if (viewRecipeStepViewModel == null) {
-                ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
-                viewRecipeStepViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
+            if (position == 0) {
+                Toast.makeText(this, "THIS WORKS! - " + String.valueOf(position), Toast.LENGTH_SHORT).show();
             } else {
-                viewRecipeStepViewModel.queryRecipe(recipeId, stepId);
-            }
-
-            viewRecipeStepViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
-                @Override
-                public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
-                    if (repositoryResponse.getError() != null) {
-                        Timber.d(repositoryResponse.getError());
-                        return;
-                    }
-
-                    RecipeStep payload = (RecipeStep) repositoryResponse.getObject();
-
-                    String recipeStepHeader = String.format("Step %d", payload.getStepIndex() + 1);
-                    String recipeDescription = payload.getDescription();
-
-                    Timber.d("Selected query result" + payload.toString());
-                    handleTextPayload(recipeStepHeader, recipeDescription);
-                    handleVideoUrl(payload.getVideoUrl());
+                Timber.d("RecipeId: %d, StepId: %d", recipeId, stepId);
+                if (viewRecipeStepViewModel == null) {
+                    ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
+                    viewRecipeStepViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
+                } else {
+                    viewRecipeStepViewModel.queryRecipe(recipeId, stepId);
                 }
-            });
+
+                viewRecipeStepViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
+                    @Override
+                    public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+                        if (repositoryResponse.getError() != null) {
+                            Timber.d(repositoryResponse.getError());
+                            return;
+                        }
+
+                        RecipeStep payload = (RecipeStep) repositoryResponse.getObject();
+
+                        String recipeStepHeader = String.format("Step %d", payload.getStepIndex() + 1);
+                        String recipeDescription = payload.getDescription();
+
+                        Timber.d("Selected query result" + payload.toString());
+                        handleTextPayload(recipeStepHeader, recipeDescription);
+                        handleVideoUrl(payload.getVideoUrl());
+                    }
+                });
+            }
         } else {
             if (position == 0) {
                 Toast.makeText(this, "THIS WORKS! - " + String.valueOf(position), Toast.LENGTH_SHORT).show();
