@@ -17,7 +17,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.selectstep.SelectRecipeDetails"/>
+        <activity
+            android:name=".ui.selectstep.SelectRecipeDetails"
+            android:launchMode="singleTop" />
         <activity android:name=".ui.viewstep.ViewRecipeStep"/>
 
     </application>
