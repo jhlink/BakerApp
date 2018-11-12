@@ -90,6 +90,7 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
         public void onViewHolderClick() {
             if (null != mListener) {
                 mListener.onDetailInteractionListener(getAdapterPosition());
+                Timber.d("AdapterPosition: %d, LayoutPosition:%d", getAdapterPosition(), getLayoutPosition());
                 notifyItemChanged(selectedPosition);
                 selectedPosition = getLayoutPosition();
                 notifyItemChanged(selectedPosition);
