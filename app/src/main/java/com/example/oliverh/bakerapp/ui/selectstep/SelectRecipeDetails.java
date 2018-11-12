@@ -35,6 +35,7 @@ public class SelectRecipeDetails extends AppCompatActivity
     private int recipeId;
     private boolean isTablet = false;
     private ViewRecipeStepViewModel viewRecipeStepViewModel;
+    private int stepId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,12 +102,13 @@ public class SelectRecipeDetails extends AppCompatActivity
 
     @Override
     public void OnNextStepFragmentInteraction() {
-        Toast.makeText(this, "HOORRAAAAY", Toast.LENGTH_SHORT).show();
+        stepId++;
+        viewRecipeStepViewModel.queryRecipe(recipeId, stepId);
     }
 
     @Override
     public void onDetailInteractionListener(int position) {
-        int stepId = position - 1;
+        stepId = position - 1;
         String recipeIdBundleTag = getString(R.string.BUNDLE_RECIPE_ID);
         String stepIdBundleTag = getString(R.string.BUNDLE_STEP_ID);
 
@@ -124,6 +126,7 @@ public class SelectRecipeDetails extends AppCompatActivity
                 public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
                     if (repositoryResponse.getError() != null) {
                         Timber.d(repositoryResponse.getError());
+                        return;
                     }
 
                     RecipeStep payload = (RecipeStep) repositoryResponse.getObject();
