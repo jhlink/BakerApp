@@ -31,7 +31,7 @@ import timber.log.Timber;
  */
 public class SelectRecipeDetailsFragment extends Fragment {
 
-    private static final String ARG_RECIPE_ID = "recipe-id";
+    public static final String ARG_RECIPE_ID = "recipe-id";
     private static final String RV_DETAILS_STATE_KEY = "RECIPE_DETAILS_STATE";
     private int recipeId = -1;
 

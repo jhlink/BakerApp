@@ -36,6 +36,26 @@ public class SelectRecipeDetails extends AppCompatActivity implements SelectReci
 
         if (isTablet) {
 
+            // Handle Master List Frag
+            SelectRecipeDetailsFragment masterListFrag = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID) ;
+
+            if (masterListFrag == null) {
+                Timber.d("Create fragment.");
+
+                masterListFrag = SelectRecipeDetailsFragment.newInstance(recipeId);
+            } else {
+                Timber.d("Found fragment.");
+                masterListFrag.setRecipeId(recipeId);
+            }
+
+            Bundle masterListFragBundle = new Bundle();
+            masterListFragBundle.putInt(SelectRecipeDetailsFragment.ARG_RECIPE_ID, recipeId);
+            masterListFrag.setArguments(masterListFragBundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID,
+                            masterListFrag,
+                            RECIPE_DETAILS_FRAGMENT_TAG)
+                    .commitNow();
 
         } else {
             if (savedInstanceState == null) {
