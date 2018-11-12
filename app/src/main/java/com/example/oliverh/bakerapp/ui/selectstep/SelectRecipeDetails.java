@@ -34,6 +34,7 @@ public class SelectRecipeDetails extends AppCompatActivity
     private static final int TABLET_RECIPE_STEP_VIDEO_COLLECTION_CONTAINER_ID = R.id.tbl_recipeStepVideoFrag;
     private int recipeId;
     private boolean isTablet = false;
+    private ViewRecipeStepViewModel viewRecipeStepViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,8 +111,13 @@ public class SelectRecipeDetails extends AppCompatActivity
         String stepIdBundleTag = getString(R.string.BUNDLE_STEP_ID);
 
         if (isTablet) {
-            ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
-            ViewRecipeStepViewModel viewRecipeStepViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
+            Timber.d("RecipeId: %d, StepId: %d", recipeId, stepId);
+            if (viewRecipeStepViewModel == null) {
+                ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
+                viewRecipeStepViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
+            } else {
+                viewRecipeStepViewModel.queryRecipe(recipeId, stepId);
+            }
 
             viewRecipeStepViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
                 @Override
@@ -124,6 +130,8 @@ public class SelectRecipeDetails extends AppCompatActivity
 
                     String recipeStepHeader = String.format("Step %d", payload.getStepIndex() + 1);
                     String recipeDescription = payload.getDescription();
+
+                    Timber.d("Selected query result" + payload.toString());
                     handleTextPayload(recipeStepHeader, recipeDescription);
                     handleVideoUrl(payload.getVideoUrl());
                 }
@@ -163,7 +171,6 @@ public class SelectRecipeDetails extends AppCompatActivity
 
             Bundle bundle = new Bundle();
             bundle.putString(getString(R.string.VIDEO_FRAG_ARGS), url);
-            fragment.setArguments(bundle);
             fragment.setAndInitializePlayer(bundle);
         }
     }

@@ -17,7 +17,7 @@ public interface RecipeStepDao {
     LiveData<List<RecipeStep>> getRecipeStepsByRecipeId(int recipeId);
 
     @Query("SELECT * FROM RecipeStep WHERE recipe_id =:recipeId AND recipe_step_index =:stepId")
-    LiveData<RecipeStep> getRecipeStepByRecipeId(int recipeId, int stepId);
+    RecipeStep getRecipeStepByRecipeId(int recipeId, int stepId);
 
     @Query("DELETE FROM Recipe")
     void nukeTable();

@@ -3,6 +3,7 @@ package com.example.oliverh.bakerapp.data;
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.content.Context;
@@ -39,7 +40,7 @@ public class RecipeRepository {
     private RecipeIngredientDao mRecipeIngredientDao;
     private RecipeStepDao mRecipeStepDao;
     private MediatorLiveData<RepositoryResponse> mediatorLiveDataRecipeList = new MediatorLiveData<>();
-    private LiveData<RepositoryResponse> repoResponse;
+    private MutableLiveData<RepositoryResponse> repoResponse;
 
     private final Context mContext;
 
@@ -117,24 +118,32 @@ public class RecipeRepository {
     }
 
     public LiveData<RepositoryResponse> getRecipeStep(final int recipeId, final int stepId) {
-        LiveData<RecipeStep> recipeStepLiveData = mRecipeStepDao.getRecipeStepByRecipeId(recipeId, stepId);
 
-        Timber.d("Requested Recipe Step - Recipe ID: %d / Step ID: %d", recipeId, stepId);
+        if (repoResponse == null) {
+            repoResponse = new MutableLiveData<>();
+        }
 
-        LiveData<RepositoryResponse> result =
-                Transformations.map(recipeStepLiveData, new Function<RecipeStep, RepositoryResponse>() {
-                    @Override
-                    public RepositoryResponse apply(RecipeStep input) {
-                        if ( input == null) {
-                            Timber.e("Error: RecipeStep object doesn't exist");
-                            return new RepositoryResponse(new IOException("Object does not exist"));
-                        }
-                        Timber.d("Queried Step: %s", input.toString());
-                        return new RepositoryResponse(input);
-                    }
-                });
+        queryRecipeStep(recipeId, stepId);
 
-        return result;
+        return repoResponse;
+    }
+
+    public void queryRecipeStep(final int recipeId, final int stepId) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                RecipeStep recipeStep = mRecipeStepDao.getRecipeStepByRecipeId(recipeId, stepId);
+
+                if (recipeStep == null) {
+                    Timber.e("Error: RecipeStep object doesn't exist");
+                    repoResponse.postValue(new RepositoryResponse(new IOException("Object does not exist")));
+                }
+
+                Timber.d("Queried Step: %s", recipeStep.toString());
+                repoResponse.postValue(new RepositoryResponse(recipeStep));
+            }
+        });
+
     }
 
     public LiveData<RepositoryResponse> getRecipeSteps(final int recipeId) {
