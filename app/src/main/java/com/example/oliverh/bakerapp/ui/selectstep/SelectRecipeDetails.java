@@ -5,18 +5,23 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 import com.example.oliverh.bakerapp.ui.viewstep.RecipeVideoFragment;
+import com.example.oliverh.bakerapp.ui.viewstep.ViewIngredientsFragment;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepHolder;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepTextFragment;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepViewModel;
 import com.example.oliverh.bakerapp.ui.viewstep.ViewRecipeStepViewModelFactory;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 public class SelectRecipeDetails extends AppCompatActivity
@@ -32,10 +37,20 @@ public class SelectRecipeDetails extends AppCompatActivity
     private static final int TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID = R.id.tbl_recipeDetailsListFrag;
     private static final int TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID = R.id.tbl_recipeStepTextFrag;
     private static final int TABLET_RECIPE_STEP_VIDEO_COLLECTION_CONTAINER_ID = R.id.tbl_recipeStepVideoFrag;
+    private static final int TABLET_RECIPE_INGREDIENT_COLLECTION_CONTAINER_ID = R.id.tbl_recipeIngredientFrag;
     private int recipeId;
     private boolean isTablet = false;
     private ViewRecipeStepViewModel viewRecipeStepViewModel;
     private int stepId;
+
+    @BindView(R.id.tbl_recipeIngredientFrag)
+    @Nullable
+    FrameLayout layout;
+
+    @BindView(R.id.tbl_recipeDetailsListFrag)
+    @Nullable
+    FrameLayout detailsLayout;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,8 +58,9 @@ public class SelectRecipeDetails extends AppCompatActivity
 
         setContentView(R.layout.master_recipe_step_list);
 
+        ButterKnife.bind(this);
         recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
-        isTablet = this.findViewById(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID) != null;
+        isTablet = detailsLayout != null;
 
         Timber.d("BackStack Count %d ", getSupportFragmentManager().getBackStackEntryCount());
 
@@ -68,7 +84,7 @@ public class SelectRecipeDetails extends AppCompatActivity
                         .replace(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID,
                                 masterListFrag,
                                 RECIPE_DETAILS_FRAGMENT_TAG)
-                        .commitNow();
+                        .commit();
             }
 
         } else {
@@ -116,8 +132,18 @@ public class SelectRecipeDetails extends AppCompatActivity
 
         if (isTablet) {
             if (position == 0) {
-                Toast.makeText(this, "THIS WORKS! - " + String.valueOf(position), Toast.LENGTH_SHORT).show();
+                handleDependentFragmentState(0);
+                ViewIngredientsFragment viewIngredientsFragment = ViewIngredientsFragment.newInstance(recipeId);
+
+                getSupportFragmentManager().executePendingTransactions();
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.tbl_recipeIngredientFrag, viewIngredientsFragment)
+                        .commitNow();
+
+
             } else {
+                // Request for data given recipeId and stepId
                 Timber.d("RecipeId: %d, StepId: %d", recipeId, stepId);
                 if (viewRecipeStepViewModel == null) {
                     ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
@@ -140,6 +166,7 @@ public class SelectRecipeDetails extends AppCompatActivity
                         String recipeDescription = payload.getDescription();
 
                         Timber.d("Selected query result" + payload.toString());
+                        handleDependentFragmentState(1);
                         handleTextPayload(recipeStepHeader, recipeDescription);
                         handleVideoUrl(payload.getVideoUrl());
                     }
@@ -164,6 +191,52 @@ public class SelectRecipeDetails extends AppCompatActivity
             Timber.d("Launch ViewRecipeStepHolder activity - recipeId: %d, stepId: %d, state: %d", recipeId, stepId, vsState);
             startActivity(intent);
         }
+    }
+
+    private void handleDependentFragmentState(int state) {
+        switch (state) {
+            case 1:
+                showStepDetails();
+                break;
+
+            case 0:
+            default:
+                showIngredients();
+        }
+    }
+
+    private void showStepDetails() {
+        RecipeVideoFragment recipeVideoFragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_VIDEO_COLLECTION_CONTAINER_ID);
+        ViewRecipeStepTextFragment recipeStepTextFragment = (ViewRecipeStepTextFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID);
+        ViewIngredientsFragment viewIngredientsFragment = (ViewIngredientsFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_INGREDIENT_COLLECTION_CONTAINER_ID);
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction()
+                .show(recipeVideoFragment)
+                .show(recipeStepTextFragment);
+
+        if (viewIngredientsFragment != null) {
+            fragmentTransaction.hide(viewIngredientsFragment);
+            layout.setVisibility(View.GONE);
+        }
+
+        fragmentTransaction.commit();
+    }
+
+    private void showIngredients() {
+        RecipeVideoFragment recipeVideoFragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_VIDEO_COLLECTION_CONTAINER_ID);
+        ViewRecipeStepTextFragment recipeStepTextFragment = (ViewRecipeStepTextFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID);
+        ViewIngredientsFragment viewIngredientsFragment = (ViewIngredientsFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_INGREDIENT_COLLECTION_CONTAINER_ID);
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction()
+                .hide(recipeVideoFragment)
+                .hide(recipeStepTextFragment);
+
+        if (viewIngredientsFragment != null) {
+            layout.setVisibility(View.VISIBLE);
+            fragmentTransaction.show(viewIngredientsFragment);
+        }
+
+        fragmentTransaction.commit();
     }
 
     private void handleTextPayload(String header, String desc) {
