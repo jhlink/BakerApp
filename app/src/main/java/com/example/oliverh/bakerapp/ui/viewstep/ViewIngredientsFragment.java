@@ -1,4 +1,4 @@
-package com.example.oliverh.bakerapp.ui.viewingredients;
+package com.example.oliverh.bakerapp.ui.viewstep;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;

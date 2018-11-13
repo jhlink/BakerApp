@@ -1,4 +1,4 @@
-package com.example.oliverh.bakerapp.ui.viewingredients;
+package com.example.oliverh.bakerapp.ui.viewstep;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
