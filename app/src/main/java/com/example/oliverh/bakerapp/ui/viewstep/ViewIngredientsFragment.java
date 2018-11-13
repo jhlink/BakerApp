@@ -20,6 +20,7 @@ import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragmentViewModel;
 import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragmentViewModelFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -75,7 +76,7 @@ public class ViewIngredientsFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
-            adapter = new ViewIngredientsRecyclerViewAdapter(null);
+            adapter = new ViewIngredientsRecyclerViewAdapter(new ArrayList<RecipeIngredient>());
             recyclerView.setAdapter(adapter);
 
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -83,6 +84,10 @@ public class ViewIngredientsFragment extends Fragment {
             mViewModel.getRecipeIngredients().observe(this, new Observer<RepositoryResponse>() {
                 @Override
                 public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+                    if (repositoryResponse.getError() != null) {
+                        Timber.e(repositoryResponse.getError());
+                        return;
+                    }
                     List<RecipeIngredient> recipeIngredients = repositoryResponse.getListOfData();
                     adapter.setRecipeIngredients(recipeIngredients);
                     adapter.notifyDataSetChanged();
