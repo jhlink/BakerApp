@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.example.oliverh.bakerapp.Constants;
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
@@ -167,6 +168,7 @@ public class SelectRecipeDetails extends AppCompatActivity
                 //  In either case, this will be easier to handle than juggling three fragments in this class.
                 int vsState = 1;
                 Intent intent = new Intent(this, ViewRecipeStepHolder.class);
+
                 intent.putExtra(recipeIdBundleTag, recipeId);
                 intent.putExtra(stepIdBundleTag, stepId);
                 intent.putExtra(viewStepState, vsState);
