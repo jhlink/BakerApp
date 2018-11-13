@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.example.oliverh.bakerapp.Constants;
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
@@ -147,35 +146,23 @@ public class SelectRecipeDetails extends AppCompatActivity
                 });
             }
         } else {
-            if (false) {
-                int containerId = RECIPE_DETAIL_COLLECTION_CONTAINER_ID;
+            int vsState;
 
-                boolean isLandscape = this.findViewById(LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID) != null;
-
-                if (isLandscape) {
-                    containerId = LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID;
-                }
-
-                //ViewIngredientsFragment fragment = ViewIngredientsFragment.newInstance(recipeId);
-                //FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction()
-                //        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                //        .replace(containerId, fragment);
-                //fragmentTransaction.addToBackStack("TEST");
-                //fragmentTransaction.commit();
+            // This will refer to either the ingredients list [0] or the step screen [1].
+            //  In either case, this will be easier to handle than juggling three fragments in this class.
+            if (position == 0) {
+                vsState = 0;
             } else {
-
-                // This will refer to either the ingredients list or the step screen.
-                //  In either case, this will be easier to handle than juggling three fragments in this class.
-                int vsState = 1;
-                Intent intent = new Intent(this, ViewRecipeStepHolder.class);
-
-                intent.putExtra(recipeIdBundleTag, recipeId);
-                intent.putExtra(stepIdBundleTag, stepId);
-                intent.putExtra(viewStepState, vsState);
-
-                Timber.d("Launch ViewRecipeStepHolder activity - recipeId: %d, stepId: %d", recipeId, stepId);
-                startActivity(intent);
+                vsState = 1;
             }
+
+            Intent intent = new Intent(this, ViewRecipeStepHolder.class);
+            intent.putExtra(recipeIdBundleTag, recipeId);
+            intent.putExtra(stepIdBundleTag, stepId);
+            intent.putExtra(viewStepState, vsState);
+
+            Timber.d("Launch ViewRecipeStepHolder activity - recipeId: %d, stepId: %d, state: %d", recipeId, stepId, vsState);
+            startActivity(intent);
         }
     }
 
