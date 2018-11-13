@@ -39,6 +39,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/tbl_recipeIngredientFrag"
+            android:name="com.example.oliverh.bakerapp.ui.viewstep.ViewIngredientsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
