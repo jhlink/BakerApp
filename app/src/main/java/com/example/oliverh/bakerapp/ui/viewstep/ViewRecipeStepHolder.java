@@ -14,7 +14,7 @@ import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
 import timber.log.Timber;
 
-public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepTextFragment.OnFragmentInteractionListener {
+public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecipeStepTextFragment.OnFragmentInteractionListener {
 
     private static final int FULLSCREEN_CONTAINER_ID = R.id.full_video_view_screen;
 
@@ -22,6 +22,7 @@ public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepT
     private ViewRecipeStepViewModel mViewModel;
     private int recipeId;
     private int stepId;
+    private int vsState;
 
 
     @Override
@@ -33,6 +34,7 @@ public class ViewRecipeStep extends AppCompatActivity implements ViewRecipeStepT
         //  Retrieve passed Activity data
         recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
         stepId = getIntent().getIntExtra(getString(R.string.BUNDLE_STEP_ID), -1);
+        vsState = getIntent().getIntExtra(getString(R.string.BUNDLE_STEP_STATE), 0);
 
         //  Query if orientation = landscape
         landscape_videoFullScreen = findViewById(FULLSCREEN_CONTAINER_ID) != null;
