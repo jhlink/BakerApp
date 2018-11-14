@@ -411,9 +411,11 @@
       }
       ]}
     </string>
-  <string name="BUNDLE_RECIPE_ID">RECIPE_ID</string>
+    <string name="BUNDLE_RECIPE_ID">RECIPE_ID</string>
     <string name="next_step">Next Step</string>
     <string name="BUNDLE_STEP_ID">STEP_ID</string>
-  <string name="VIDEO_FRAG_ARGS">RECIPE_VIDEO_URL</string>
-  <string name="BUNDLE_STEP_STATE">VIEW_STEP_STATE</string>
+    <string name="VIDEO_FRAG_ARGS">RECIPE_VIDEO_URL</string>
+    <string name="BUNDLE_STEP_STATE">VIEW_STEP_STATE</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>
