@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +60,6 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     public RecipeVideoFragment() {
     }
 
-
     public static RecipeVideoFragment newInstance(String videoUrl) {
         Bundle args = new Bundle();
 
@@ -80,22 +80,21 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         }
     }
 
-    // TODO: Handle state change.
-
+    //  See this link for explanation for SDK versioning
+    //      https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
     @Override
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            initializePlayer();
+            initializePlayer(getContext());
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        hideSystemUi();
-        if ((Util.SDK_INT <= 23 || player == null)) {
-            initializePlayer();
+        if ((Util.SDK_INT <= 23 || playerView == null)) {
+            initializePlayer(getContext());
         }
     }
 
