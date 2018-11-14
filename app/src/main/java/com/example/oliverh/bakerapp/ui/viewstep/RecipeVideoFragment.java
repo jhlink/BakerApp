@@ -24,15 +24,12 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.dash.DashChunkSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 
@@ -83,8 +80,32 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         }
     }
 
+    // TODO: Handle state change.
 
-    @Nullable
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        hideSystemUi();
+        if ((Util.SDK_INT <= 23 || player == null)) {
+            initializePlayer();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+        mMediaSession.setActive(false);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipe_video_view, container, false);
@@ -109,14 +130,6 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
             createAndSetMediaSource();
         }
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
-        mMediaSession.setActive(false);
-    }
-
     private void initializePlayer(Context context) {
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
@@ -126,7 +139,12 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
             LoadControl loadControl = new DefaultLoadControl();
             RenderersFactory renderersFactory = new DefaultRenderersFactory(context);
 
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl, null, BANDWIDTH_METER);
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(context,
+                    renderersFactory,
+                    trackSelector,
+                    loadControl,
+                    null,
+                    BANDWIDTH_METER);
 
             playerView.setPlayer(mExoPlayer);
 
@@ -145,8 +163,9 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
     private void createAndSetMediaSource() {
         if (mVideoUrl != null) {
-            // Prepare the MediaSource.
             Uri uri = Uri.parse(mVideoUrl);
+            Timber.d("Vidurl URL: %s", uri.toString());
+            // Prepare the MediaSource.
             MediaSource mediaSource = buildMediaSource(uri);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
@@ -162,18 +181,11 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     }
 
     private MediaSource buildMediaSource(Uri uri) {
-        DataSource.Factory manifestDataSourceFactory = new DefaultHttpDataSourceFactory("ua");
-
-        DashChunkSource.Factory dashChunkSourceFactory =
-                new DefaultDashChunkSource.Factory(
-                        new DefaultHttpDataSourceFactory("ua", BANDWIDTH_METER));
-
-        //new DashMediaSource.Factory(dashChunkSourceFactory, manifestDataSourceFactory).createMediaSource(uri);
+        Timber.d("Video Url: %s", uri.toString());
 
         return new ExtractorMediaSource.Factory(
                 new DefaultHttpDataSourceFactory("ua")).
                 createMediaSource(uri);
-
     }
 
 
