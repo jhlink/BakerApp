@@ -26,6 +26,7 @@ import com.squareup.moshi.Types;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -115,6 +116,16 @@ public class RecipeRepository {
     public LiveData<RepositoryResponse> getRecipeList() {
         fetchRecipeListData();
         return mediatorLiveDataRecipeList;
+    }
+
+    public List<Recipe> getRawRecipeList() {
+        List<Recipe> recipes = mRecipeDao.getListOfRecipes();
+
+        if (recipes == null || recipes.isEmpty()) {
+            recipes = new ArrayList<>();
+        }
+
+        return recipes;
     }
 
     public LiveData<RepositoryResponse> getRecipeStep(final int recipeId, final int stepId) {
