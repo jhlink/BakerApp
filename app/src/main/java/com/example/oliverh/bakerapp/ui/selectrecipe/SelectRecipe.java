@@ -87,17 +87,15 @@ public class SelectRecipe extends AppCompatActivity implements
     public void onListFragmentInteraction(Recipe recipe) {
         Toast.makeText(this, recipe.getRecipeName(), Toast.LENGTH_SHORT).show();
 
-        String currentAction = getIntent().getAction();
+        String currentAction = getIntent().getAction() == null ? "" : getIntent().getAction();
 
         switch (currentAction) {
-            case INTENT_ACTION_MAIN:
-                handleActionMainIntent(recipe);
-                break;
-
             case INTENT_WIDGET_CONFIGURE:
                 break;
 
+            case INTENT_ACTION_MAIN:
             default:
+                handleActionMainIntent(recipe);
         }
 
     }
