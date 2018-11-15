@@ -118,7 +118,7 @@ public class RecipeRepository {
         return mediatorLiveDataRecipeList;
     }
 
-    public List<RecipeIngredient> getRawRecipeList(int recipeId) {
+    public List<RecipeIngredient> getRawIngredientsList(int recipeId) {
         List<RecipeIngredient> ingredients = mRecipeIngredientDao.getRawListOfRecipeIngredientsById(recipeId);
 
         if (ingredients == null || ingredients.isEmpty()) {
