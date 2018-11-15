@@ -23,6 +23,10 @@
             android:launchMode="singleTop" />
         <activity android:name=".ui.viewstep.ViewRecipeStepHolder" />
 
+        <service
+            android:name=".ui.widget.IngredientsRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <receiver android:name=".ui.widget.IngredientsWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
