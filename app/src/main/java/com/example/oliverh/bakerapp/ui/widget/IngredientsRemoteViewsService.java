@@ -42,7 +42,6 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
                 recipeNames.add(recipe.getRecipeName());
             }
         }
-
     }
 
     @Override
@@ -52,12 +51,15 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onDestroy() {
-
+        recipeNames.clear();
     }
 
     @Override
     public int getCount() {
-        return 0;
+        if (recipeNames == null || recipeNames.isEmpty()) {
+            return 0;
+        }
+        return recipeNames.size();
     }
 
     @Override
@@ -72,16 +74,16 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 }
