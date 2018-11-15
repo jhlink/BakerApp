@@ -1,15 +1,18 @@
 package com.example.oliverh.bakerapp.ui.selectrecipe;
 
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
 import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetails;
+import com.example.oliverh.bakerapp.ui.widget.IngredientsRemoteViewsService;
 import com.facebook.stetho.Stetho;
 
 import timber.log.Timber;
@@ -91,6 +94,7 @@ public class SelectRecipe extends AppCompatActivity implements
 
         switch (currentAction) {
             case INTENT_WIDGET_CONFIGURE:
+                handleWidgetConfigurationIntent(recipe);
                 break;
 
             case INTENT_ACTION_MAIN:
@@ -100,8 +104,33 @@ public class SelectRecipe extends AppCompatActivity implements
 
     }
 
-    private void handleWidgetConfigurationIntent() {
+    private void handleWidgetConfigurationIntent(Recipe recipe) {
+        setResult(RESULT_CANCELED);
 
+        Context context = getApplicationContext();
+        Bundle widgetExtras = getIntent().getExtras();
+        int appWidgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
+
+        if ( widgetExtras != null ) {
+            appWidgetID = widgetExtras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        int recipeId = recipe.getId();
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget);
+
+        Intent intent = new Intent(context, IngredientsRemoteViewsService.class);
+        intent.putExtra("WIDGET_RECIPE_ID", recipeId);
+        remoteViews.setRemoteAdapter(R.id.lv_widgetListContainer, intent);
+
+        appWidgetManager.updateAppWidget(appWidgetID, remoteViews);
+
+        Intent resultValue = new Intent();
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetID);
+        setResult(RESULT_OK, resultValue);
+        finish();
     }
 
     private void handleActionMainIntent(Recipe recipe) {
