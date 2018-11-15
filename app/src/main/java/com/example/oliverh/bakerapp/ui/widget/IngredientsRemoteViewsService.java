@@ -39,7 +39,6 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onCreate() {
-        extractRecipeNamesFromRepository();
     }
 
     private void extractRecipeNamesFromRepository() {
@@ -51,6 +50,8 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
                 Log.d("RECIPE WIDGE", "CAN YOU... " + String.valueOf(recipes.size()));
                 if (recipes != null) {
+                    Log.d("RECIPE WIDGE", "VALIDATE INTERNAL");
+                    recipeNames.clear();
                     for (Recipe recipe : recipes) {
                         recipeNames.add(recipe.getRecipeName());
                         Timber.d(" Widget Logging %s", recipe.getRecipeName());
@@ -62,6 +63,17 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onDataSetChanged() {
+        List<Recipe> recipes = recipeRepository.getRawRecipeList();
+
+        Log.d("RECIPE WIDGE", "CAN YOU... " + String.valueOf(recipes.size()));
+        if (recipes != null) {
+            Log.d("RECIPE WIDGE", "VALIDATE INTERNAL");
+            recipeNames.clear();
+            for (Recipe recipe : recipes) {
+                recipeNames.add(recipe.getRecipeName());
+                Timber.d(" Widget Logging %s", recipe.getRecipeName());
+            }
+        }
     }
 
     @Override
