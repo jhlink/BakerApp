@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.RecipeRepository;
 import com.example.oliverh.bakerapp.data.database.AppDatabase;
 import com.example.oliverh.bakerapp.data.database.Recipe;
@@ -37,7 +38,7 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private void extractRecipeNamesFromRepository() {
         List<Recipe> recipes = recipeRepository.getRawRecipeList();
 
-        if (recipes.size() > 0) {
+        if (recipes != null) {
             for (Recipe recipe : recipes) {
                 recipeNames.add(recipe.getRecipeName());
             }
@@ -64,7 +65,12 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public RemoteViews getViewAt(int position) {
-        return null;
+        String recipeName = recipeNames.get(position);
+
+        RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.recipe_details_list_item);
+        remoteViews.setTextViewText(R.id.tv_generic_details_box, recipeName);
+
+        return remoteViews;
     }
 
     @Override
