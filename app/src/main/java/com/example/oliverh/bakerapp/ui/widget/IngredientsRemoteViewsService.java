@@ -10,7 +10,7 @@ import com.example.oliverh.bakerapp.AppExecutors;
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.RecipeRepository;
 import com.example.oliverh.bakerapp.data.database.AppDatabase;
-import com.example.oliverh.bakerapp.data.database.Recipe;
+import com.example.oliverh.bakerapp.data.database.RecipeIngredient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,68 +29,55 @@ class IngredientsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private Context mContext;
     private RecipeRepository recipeRepository;
     private AppExecutors appExecutors;
-    private List<String> recipeNames = new ArrayList<>();
+    private List<String> ingredientNames = new ArrayList<>();
+    private int recipeId;
 
     public IngredientsRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
         appExecutors = AppExecutors.getInstance();
         recipeRepository = RecipeRepository.getInstance(context, AppDatabase.getInstance(context));
+        recipeId = intent.getIntExtra("WIDGET_RECIPE_ID", -1);
     }
 
     @Override
     public void onCreate() {
     }
 
-    private void extractRecipeNamesFromRepository() {
+    private void extractIngredientsFromRepository() {
         Log.d("RECIPE WIDGE", "starting query");
-        appExecutors.diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                List<Recipe> recipes = recipeRepository.getRawRecipeList();
+        List<RecipeIngredient> ingredients = recipeRepository.getRawIngredientsList(recipeId);
 
-                Log.d("RECIPE WIDGE", "CAN YOU... " + String.valueOf(recipes.size()));
-                if (recipes != null) {
-                    Log.d("RECIPE WIDGE", "VALIDATE INTERNAL");
-                    recipeNames.clear();
-                    for (Recipe recipe : recipes) {
-                        recipeNames.add(recipe.getRecipeName());
-                        Timber.d(" Widget Logging %s", recipe.getRecipeName());
-                    }
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onDataSetChanged() {
-        List<Recipe> recipes = recipeRepository.getRawRecipeList();
-
-        Log.d("RECIPE WIDGE", "CAN YOU... " + String.valueOf(recipes.size()));
-        if (recipes != null) {
-            Log.d("RECIPE WIDGE", "VALIDATE INTERNAL");
-            recipeNames.clear();
-            for (Recipe recipe : recipes) {
-                recipeNames.add(recipe.getRecipeName());
-                Timber.d(" Widget Logging %s", recipe.getRecipeName());
+        Timber.d("CAN YOU... " + String.valueOf(ingredients.size()));
+        if (ingredients != null) {
+            Timber.d("VALIDATE INTERNAL");
+            ingredientNames.clear();
+            for (RecipeIngredient ingredient : ingredients) {
+                ingredientNames.add(ingredient.toUIString());
+                Timber.d(" Widget Logging %s", ingredient.toUIString());
             }
         }
     }
 
     @Override
+    public void onDataSetChanged() {
+        extractIngredientsFromRepository();
+    }
+
+    @Override
     public void onDestroy() {
-        recipeNames.clear();
+        ingredientNames.clear();
         appExecutors = null;
     }
 
     @Override
     public int getCount() {
-        Log.d("WIDGET", String.valueOf(recipeNames.size()));
-        return recipeNames.size();
+        Log.d("WIDGET", String.valueOf(ingredientNames.size()));
+        return ingredientNames.size();
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
-        String recipeName = recipeNames.get(position);
+        String recipeName = ingredientNames.get(position);
 
         Timber.d(" View at ... %d ", position);
 
