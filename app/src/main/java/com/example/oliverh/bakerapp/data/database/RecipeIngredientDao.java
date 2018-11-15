@@ -16,6 +16,9 @@ public interface RecipeIngredientDao {
     @Query("SELECT * FROM RecipeIngredient WHERE recipe_id =:recipeId")
     LiveData<List<RecipeIngredient>> getRecipeIngredientsById(int recipeId);
 
+    @Query("SELECT * FROM RecipeIngredient WHERE recipe_id =:recipeId")
+    List<RecipeIngredient> getRawListOfRecipeIngredientsById(int recipeId);
+
     @Query("DELETE FROM Recipe")
     void nukeTable();
 }

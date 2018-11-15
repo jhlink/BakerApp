@@ -118,20 +118,14 @@ public class RecipeRepository {
         return mediatorLiveDataRecipeList;
     }
 
-    public List<Recipe> getRawRecipeList() {
-        List<Recipe> recipes = mRecipeDao.getListOfRecipes();
+    public List<RecipeIngredient> getRawRecipeList(int recipeId) {
+        List<RecipeIngredient> ingredients = mRecipeIngredientDao.getRawListOfRecipeIngredientsById(recipeId);
 
-        if (recipes != null) {
-            for (Recipe recipe : recipes) {
-                Timber.d(recipe.toString());
-            }
+        if (ingredients == null || ingredients.isEmpty()) {
+            ingredients = new ArrayList<>();
         }
 
-        if (recipes == null || recipes.isEmpty()) {
-            recipes = new ArrayList<>();
-        }
-
-        return recipes;
+        return ingredients;
     }
 
     public LiveData<RepositoryResponse> getRecipeStep(final int recipeId, final int stepId) {
