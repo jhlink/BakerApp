@@ -1,5 +1,6 @@
 package com.example.oliverh.bakerapp.ui.selectrecipe;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,9 @@ public class SelectRecipe extends AppCompatActivity implements
     private static final int TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.tablet_recipe_collection_container;
     private static final int LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.land_recipe_collection_container;
     private static final int RECIPE_COLLECTION_CONTAINER_ID = R.id.recipe_collection_container;
+    private static final String INTENT_ACTION_MAIN = Intent.ACTION_MAIN;
+    private static final String INTENT_WIDGET_CONFIGURE = AppWidgetManager.ACTION_APPWIDGET_CONFIGURE;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +72,7 @@ public class SelectRecipe extends AppCompatActivity implements
         initializeStetho();
     }
 
-    private static void initializeTimber(){
+    private static void initializeTimber() {
         if (Timber.treeCount() < 1) {
             Timber.plant(new Timber.DebugTree());
             Timber.d("Timber Tree Count: %d", Timber.treeCount());
@@ -83,10 +87,30 @@ public class SelectRecipe extends AppCompatActivity implements
     public void onListFragmentInteraction(Recipe recipe) {
         Toast.makeText(this, recipe.getRecipeName(), Toast.LENGTH_SHORT).show();
 
-        final Intent intent = new Intent(this, SelectRecipeDetails.class);
-        int recipeId = recipe.getId();
+        String currentAction = getIntent().getAction();
 
-        Timber.d("Intent to pass to SelectRecipeDetails : %d", recipeId);
+        switch (currentAction) {
+            case INTENT_ACTION_MAIN:
+                handleActionMainIntent(recipe);
+                break;
+
+            case INTENT_WIDGET_CONFIGURE:
+                break;
+
+            default:
+        }
+
+    }
+
+    private void handleWidgetConfigurationIntent() {
+
+    }
+
+    private void handleActionMainIntent(Recipe recipe) {
+        int recipeId = recipe.getId();
+        final Intent intent = new Intent(this, SelectRecipeDetails.class);
+
+        Timber.d("ACTION_MAIN Intent / RecipeId %d", recipeId);
 
         intent.putExtra(getString(R.string.BUNDLE_RECIPE_ID), recipeId);
         startActivity(intent);
