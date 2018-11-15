@@ -55,9 +55,9 @@ public class RecipeRepository {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mRecipeDao.nukeTable();
-                mRecipeStepDao.nukeTable();
-                mRecipeIngredientDao.nukeTable();
+                //mRecipeDao.nukeTable();
+                //mRecipeStepDao.nukeTable();
+                //mRecipeIngredientDao.nukeTable();
             }
         });
 
@@ -120,6 +120,12 @@ public class RecipeRepository {
 
     public List<Recipe> getRawRecipeList() {
         List<Recipe> recipes = mRecipeDao.getListOfRecipes();
+
+        if (recipes != null) {
+            for (Recipe recipe : recipes) {
+                Timber.d(recipe.toString());
+            }
+        }
 
         if (recipes == null || recipes.isEmpty()) {
             recipes = new ArrayList<>();
