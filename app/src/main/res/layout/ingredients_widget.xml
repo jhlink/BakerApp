@@ -1,17 +1,17 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/trans_underlay"
     android:padding="@dimen/widget_margin">
 
-    <ImageView
-        android:id="@+id/iv_baker_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true"
-        android:background="@color/trans_underlay"
-        android:cropToPadding="true"
-        android:src="@drawable/ic_bake_tools_logo" />
+    <ListView
+        android:id="@+id/lv_widgetListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/recipe_details_list_item"
+        android:background="@color/cardview_light_background"
+        android:divider="#000000"
+        android:dividerHeight="1dp" />
 
-</RelativeLayout>
+</LinearLayout>
