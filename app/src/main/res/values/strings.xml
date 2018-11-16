@@ -515,12 +515,16 @@
       }
       ]}
     </string>
+  <string name="SELECT_RECIPE_INTENT_FORMULA_RECIPE_ID">Intent: %s - RecipeID %d</string>
+
   <string name="BUNDLE_RECIPE_ID">RECIPE_ID</string>
-  <string name="next_step">Next Step</string>
   <string name="BUNDLE_STEP_ID">STEP_ID</string>
   <string name="VIDEO_FRAG_ARGS">RECIPE_VIDEO_URL</string>
   <string name="BUNDLE_STEP_STATE">VIEW_STEP_STATE</string>
-  <string name="add_widget">Add widget</string>
-  <string name="SELECT_RECIPE_INTENT_FORMULA_RECIPE_ID">Intent: %s - RecipeID %d</string>
   <string name="EXTRA_WIDGET_RECIPE_ID">WIDGET_RECIPE_ID</string>
+
+  <string name="next_step">Next Step</string>
+  <string name="add_widget">Add widget</string>
+  <string name="network_error">Network Error: Failed to retrieve data. Please try again later.</string>
+
 </resources>

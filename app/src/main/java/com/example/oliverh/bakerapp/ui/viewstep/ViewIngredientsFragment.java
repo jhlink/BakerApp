@@ -67,15 +67,15 @@ public class ViewIngredientsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_recipe_recycler_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_generic_recycler_view, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            recyclerView = (RecyclerView) view;
+        Context context = view.getContext();
+        recyclerView = view.findViewById(R.id.rv_generic_container);
+        if (recyclerView != null) {
             adapter = new ViewIngredientsRecyclerViewAdapter(new ArrayList<RecipeIngredient>());
             recyclerView.setAdapter(adapter);
 
@@ -84,10 +84,11 @@ public class ViewIngredientsFragment extends Fragment {
             mViewModel.getRecipeIngredients().observe(this, new Observer<RepositoryResponse>() {
                 @Override
                 public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
-                    if (repositoryResponse.getError() != null) {
-                        Timber.e(repositoryResponse.getError());
+
+                    if (isErrorPresent(repositoryResponse)) {
                         return;
                     }
+
                     List<RecipeIngredient> recipeIngredients = repositoryResponse.getListOfData();
                     adapter.setRecipeIngredients(recipeIngredients);
                     adapter.notifyDataSetChanged();
@@ -98,18 +99,39 @@ public class ViewIngredientsFragment extends Fragment {
         return view;
     }
 
-    private void restorePosition() {
-        if (mState != null) {
-            recyclerView.getLayoutManager().onRestoreInstanceState(mState);
-            mState = null;
+    private boolean isErrorPresent(RepositoryResponse repositoryResponse) {
+        boolean result = false;
+        if (repositoryResponse == null) {
+            Timber.e("RepositoryResponse does not exist");
+            result = true;
+        } else if (repositoryResponse.getError() != null) {
+            Timber.e("RepositoryResponse does not exist");
+            result = true;
         }
+
+        return result;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        mState = recyclerView.getLayoutManager().onSaveInstanceState();
+        RecyclerView.LayoutManager rvLayoutManager = recyclerView.getLayoutManager();
+        if (rvLayoutManager != null) {
+            mState = rvLayoutManager.onSaveInstanceState();
+        }
+
         outState.putParcelable(LIST_STATE_KEY, mState);
     }
+
+    private void restorePosition() {
+        if (mState != null) {
+            RecyclerView.LayoutManager rvLayoutManager = recyclerView.getLayoutManager();
+            if (rvLayoutManager != null) {
+                rvLayoutManager.onRestoreInstanceState(mState);
+            }
+            mState = null;
+        }
+    }
+
 }

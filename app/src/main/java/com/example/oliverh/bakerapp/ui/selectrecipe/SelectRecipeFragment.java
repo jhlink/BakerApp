@@ -78,12 +78,11 @@ public class SelectRecipeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_recipe_recycler_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_generic_recycler_view, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            recyclerView = (RecyclerView) view;
+        Context context = view.getContext();
+        recyclerView = view.findViewById(R.id.rv_generic_container);
+        if (recyclerView != null) {
             adapter = new SelectRecipeRecyclerViewAdapter(null, mListener);
             recyclerView.setAdapter(adapter);
 
@@ -98,19 +97,31 @@ public class SelectRecipeFragment extends Fragment {
             mViewModel.getRecipes().observe(this, new Observer<RepositoryResponse>() {
                 @Override
                 public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
-                    if (repositoryResponse != null) {
-                        List<Recipe> recipes = repositoryResponse.getListOfData();
-
-                        adapter.setRecipes(recipes);
-                        adapter.notifyDataSetChanged();
-                        restorePosition();
-                    } else {
-                        Timber.e("Repository Response does not exist");
+                    if (isErrorPresent(repositoryResponse)) {
+                        return;
                     }
+
+                    List<Recipe> recipes = repositoryResponse.getListOfData();
+                    adapter.setRecipes(recipes);
+                    adapter.notifyDataSetChanged();
+                    restorePosition();
                 }
             });
         }
         return view;
+    }
+
+    private boolean isErrorPresent(RepositoryResponse repositoryResponse) {
+        boolean result = false;
+        if (repositoryResponse == null) {
+            Timber.e("RepositoryResponse does not exist");
+            result = true;
+        } else if (repositoryResponse.getError() != null) {
+            Timber.e("RepositoryResponse does not exist");
+            result = true;
+        }
+
+        return result;
     }
 
     private void restorePosition() {

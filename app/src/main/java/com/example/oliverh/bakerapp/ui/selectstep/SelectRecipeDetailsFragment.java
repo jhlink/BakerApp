@@ -80,12 +80,12 @@ public class SelectRecipeDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipe_recycler_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_generic_recycler_view, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            recyclerView = (RecyclerView) view;
+        Context context = view.getContext();
+        recyclerView = view.findViewById(R.id.rv_generic_container);
+        if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
             adapter = new SelectRecipeDetailsRecyclerViewAdapter(new SparseArray(), mListener);
@@ -94,6 +94,11 @@ public class SelectRecipeDetailsFragment extends Fragment {
             mViewModel.getRecipeSteps().observe(this, new Observer<RepositoryResponse>() {
                 @Override
                 public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+
+                    if (isErrorPresent(repositoryResponse)) {
+                        return;
+                    }
+
                     List<RecipeStep> steps = repositoryResponse.getListOfData();
 
                     SparseArray sparseArray = new SparseArray<>();
@@ -114,20 +119,41 @@ public class SelectRecipeDetailsFragment extends Fragment {
         return view;
     }
 
+    private boolean isErrorPresent(RepositoryResponse repositoryResponse) {
+        boolean result = false;
+        if (repositoryResponse == null) {
+            Timber.e("RepositoryResponse does not exist");
+            result = true;
+        } else if (repositoryResponse.getError() != null) {
+            Timber.e("RepositoryResponse does not exist");
+            result = true;
+        }
+
+        return result;
+    }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        mSavedState = recyclerView.getLayoutManager().onSaveInstanceState();
+        RecyclerView.LayoutManager rvLayoutManager = recyclerView.getLayoutManager();
+        if (rvLayoutManager != null) {
+            mSavedState = rvLayoutManager.onSaveInstanceState();
+        }
+
         outState.putParcelable(RV_DETAILS_STATE_KEY, mSavedState);
     }
 
     private void restorePosition() {
         if (mSavedState != null) {
-            recyclerView.getLayoutManager().onRestoreInstanceState(mSavedState);
+            RecyclerView.LayoutManager rvLayoutManager = recyclerView.getLayoutManager();
+            if (rvLayoutManager != null) {
+                rvLayoutManager.onRestoreInstanceState(mSavedState);
+            }
             mSavedState = null;
         }
     }
+
 
     public void setRecipeId(int recipeId) {
         this.recipeId = recipeId;
