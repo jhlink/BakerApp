@@ -105,7 +105,7 @@ public class ViewIngredientsFragment extends Fragment {
             Timber.e("RepositoryResponse does not exist");
             result = true;
         } else if (repositoryResponse.getError() != null) {
-            Timber.e("RepositoryResponse does not exist");
+            Timber.e(repositoryResponse.getError());
             result = true;
         }
 
