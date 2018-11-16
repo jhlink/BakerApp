@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -20,13 +19,14 @@ import timber.log.Timber;
 public class SelectRecipe extends AppCompatActivity implements
         SelectRecipeFragment.OnListFragmentInteractionListener {
 
-    private static final String RECIPE_LIST_FRAGMENT_TAG = "RECIPE_LIST_FRAG_TAG";
     private static final int TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.tablet_recipe_collection_container;
-    private static final int LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID = R.id.land_recipe_collection_container;
+    private static final int LAND_RECIPE_COLLECTION_CONTAINER_ID = R.id.land_recipe_collection_container;
     private static final int RECIPE_COLLECTION_CONTAINER_ID = R.id.recipe_collection_container;
     private static final String INTENT_ACTION_MAIN = Intent.ACTION_MAIN;
     private static final String INTENT_WIDGET_CONFIGURE = AppWidgetManager.ACTION_APPWIDGET_CONFIGURE;
 
+    private int columnSpan = 1;
+    private int targetContainerID = RECIPE_COLLECTION_CONTAINER_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,44 +35,37 @@ public class SelectRecipe extends AppCompatActivity implements
 
         initializeTimber();
 
+        determineDeviceOrientationState();
 
-        if (savedInstanceState == null) {
+        SelectRecipeFragment fragment = (SelectRecipeFragment) getSupportFragmentManager().findFragmentById(targetContainerID);
 
-            // TODO: Properly handle this.
-
-            SelectRecipeFragment fragment = (SelectRecipeFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_LIST_FRAGMENT_TAG);
-            if (fragment == null) {
-                Timber.d("Create fragment.");
-
-                int columnSpan = 1;
-                int targetContainerID = RECIPE_COLLECTION_CONTAINER_ID;
-                if ( this.findViewById(TABLET_RECIPE_COLLECTION_CONTAINER_ID) != null ) {
-                    columnSpan = 3;
-                    targetContainerID = TABLET_RECIPE_COLLECTION_CONTAINER_ID;
-                }
-
-                fragment = SelectRecipeFragment.newInstance(columnSpan);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(targetContainerID,
-                                fragment,
-                                RECIPE_LIST_FRAGMENT_TAG)
-                        .commitNow();
-            } else {
-                Timber.d("Found fragment.");
-            }
+        if (fragment == null) {
+            Timber.d("Create fragment.");
+            fragment = SelectRecipeFragment.newInstance(columnSpan);
         } else {
-            if ( this.findViewById(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID) != null ) {
-                Fragment fragment = SelectRecipeFragment.newInstance(2);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(LAND_TABLET_RECIPE_COLLECTION_CONTAINER_ID,
-                                fragment,
-                                RECIPE_LIST_FRAGMENT_TAG)
-                        .commitNow();
-            }
-
+            Timber.d("Found fragment.");
         }
 
-        initializeStetho();
+        getSupportFragmentManager().beginTransaction()
+                .replace(targetContainerID,
+                        fragment)
+                .commit();
+
+        // initializeStetho();
+    }
+
+    private boolean doesViewExist(int resourceId) {
+        return this.findViewById(resourceId) != null;
+    }
+
+    private void determineDeviceOrientationState() {
+        if (doesViewExist(LAND_RECIPE_COLLECTION_CONTAINER_ID)) {
+            columnSpan = 2;
+            targetContainerID = LAND_RECIPE_COLLECTION_CONTAINER_ID;
+        } else if (doesViewExist(TABLET_RECIPE_COLLECTION_CONTAINER_ID)) {
+            columnSpan = 3;
+            targetContainerID = TABLET_RECIPE_COLLECTION_CONTAINER_ID;
+        }
     }
 
     private static void initializeTimber() {
