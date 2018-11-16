@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,6 @@ import timber.log.Timber;
  */
 public class SelectRecipeFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String GRID_STATE_KEY = "GRID_POS";
 
@@ -44,20 +42,13 @@ public class SelectRecipeFragment extends Fragment {
     private RecyclerView recyclerView;
     private Parcelable mState;
 
-    private static int count = 0;
-
     public static SelectRecipeFragment newInstance() {
         return new SelectRecipeFragment();
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public SelectRecipeFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static SelectRecipeFragment newInstance(int columnCount) {
         Timber.d("Column Count: %d", columnCount);
@@ -83,14 +74,14 @@ public class SelectRecipeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    @SuppressWarnings("unchecked")
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_recipe_recycler_view, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
-            Log.d("Test", "This is RecyclerView");
             Context context = view.getContext();
             recyclerView = (RecyclerView) view;
             adapter = new SelectRecipeRecyclerViewAdapter(null, mListener);
@@ -107,10 +98,15 @@ public class SelectRecipeFragment extends Fragment {
             mViewModel.getRecipes().observe(this, new Observer<RepositoryResponse>() {
                 @Override
                 public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
-                    List<Recipe> recipes = repositoryResponse.getListOfData();
-                    adapter.setRecipes(recipes);
-                    adapter.notifyDataSetChanged();
-                    restorePosition();
+                    if (repositoryResponse != null) {
+                        List<Recipe> recipes = repositoryResponse.getListOfData();
+
+                        adapter.setRecipes(recipes);
+                        adapter.notifyDataSetChanged();
+                        restorePosition();
+                    } else {
+                        Timber.e("Repository Response does not exist");
+                    }
                 }
             });
         }
@@ -119,7 +115,10 @@ public class SelectRecipeFragment extends Fragment {
 
     private void restorePosition() {
         if (mState != null) {
-            recyclerView.getLayoutManager().onRestoreInstanceState(mState);
+            RecyclerView.LayoutManager rvLayoutManager = recyclerView.getLayoutManager();
+            if (rvLayoutManager != null) {
+                rvLayoutManager.onRestoreInstanceState(mState);
+            }
             mState = null;
         }
     }
@@ -128,7 +127,10 @@ public class SelectRecipeFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        mState = recyclerView.getLayoutManager().onSaveInstanceState();
+        RecyclerView.LayoutManager rvLayoutManager = recyclerView.getLayoutManager();
+        if (rvLayoutManager != null) {
+            mState = rvLayoutManager.onSaveInstanceState();
+        }
         outState.putParcelable(GRID_STATE_KEY, mState);
     }
 
@@ -149,16 +151,6 @@ public class SelectRecipeFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Recipe recipe);
     }
