@@ -54,5 +54,5 @@ dependencies {
     implementation 'com.jakewharton:butterknife:9.0.0-rc1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
 
-    implementation 'com.google.android.exoplayer:exoplayer:2.9.1+'
+    implementation 'com.google.android.exoplayer:exoplayer:2.9.1'
 }
