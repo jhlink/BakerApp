@@ -1,6 +1,7 @@
 
 package com.example.oliverh.bakerapp.data.network.utils;
 
+import com.example.oliverh.bakerapp.testUtils.IdlingResources;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import okhttp3.OkHttpClient;
@@ -16,6 +17,7 @@ public class OkHttpSingleton {
                 .addNetworkInterceptor(new StethoInterceptor())
                 .retryOnConnectionFailure(true)
                 .build();
+        IdlingResources.registerOkHttp(client);
     }
 
     public static OkHttpSingleton getInstance() {
