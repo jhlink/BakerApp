@@ -150,9 +150,9 @@ public class SelectRecipeFragment extends Fragment {
             result = true;
         } else if (repositoryResponse.getError() != null) {
             Timber.e(repositoryResponse.getError());
+            onNetworkFailure();
             result = true;
         }
-        onNetworkFailure();
 
         return result;
     }
