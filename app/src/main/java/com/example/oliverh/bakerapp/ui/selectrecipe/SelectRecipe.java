@@ -1,7 +1,6 @@
 package com.example.oliverh.bakerapp.ui.selectrecipe;
 
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -101,7 +100,6 @@ public class SelectRecipe extends AppCompatActivity implements
     private void handleWidgetConfigurationIntent(int mRecipeId) {
         setResult(RESULT_CANCELED);
 
-        Context context = getApplicationContext();
         Bundle widgetExtras = getIntent().getExtras();
         int appWidgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
 
@@ -110,13 +108,13 @@ public class SelectRecipe extends AppCompatActivity implements
                     AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
 
-        Intent intent = new Intent(context, IngredientsRemoteViewsService.class);
-        intent.putExtra("WIDGET_RECIPE_ID", mRecipeId);
+        //  Configure widget with select recipeID
+        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.ingredients_widget);
+        Intent intent = new Intent(this, IngredientsRemoteViewsService.class);
+        intent.putExtra(getString(R.string.EXTRA_WIDGET_RECIPE_ID), mRecipeId);
         remoteViews.setRemoteAdapter(R.id.lv_widgetListContainer, intent);
-
         appWidgetManager.updateAppWidget(appWidgetID, remoteViews);
 
         Intent resultValue = new Intent();
