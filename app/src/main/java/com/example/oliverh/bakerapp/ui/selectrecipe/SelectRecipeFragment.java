@@ -14,6 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
@@ -21,6 +23,8 @@ import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 /**
@@ -39,8 +43,16 @@ public class SelectRecipeFragment extends Fragment {
     private SelectRecipeRecyclerViewAdapter adapter;
 
     private SelectRecipeViewModel mViewModel;
-    private RecyclerView recyclerView;
     private Parcelable mState;
+
+    @BindView(R.id.rv_generic_container)
+    RecyclerView recyclerView;
+
+    @BindView(R.id.pb_loading_indicator)
+    ProgressBar progressBar;
+
+    @BindView(R.id.tv_error_message)
+    TextView errorMessage;
 
     public static SelectRecipeFragment newInstance() {
         return new SelectRecipeFragment();
@@ -79,10 +91,10 @@ public class SelectRecipeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_generic_recycler_view, container, false);
+        ButterKnife.bind(this, view);
 
-        Context context = view.getContext();
-        recyclerView = view.findViewById(R.id.rv_generic_container);
         if (recyclerView != null) {
+            Context context = view.getContext();
             adapter = new SelectRecipeRecyclerViewAdapter(null, mListener);
             recyclerView.setAdapter(adapter);
 
@@ -94,6 +106,7 @@ public class SelectRecipeFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
+            onNetworkRequest();
             mViewModel.getRecipes().observe(this, new Observer<RepositoryResponse>() {
                 @Override
                 public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
@@ -105,10 +118,29 @@ public class SelectRecipeFragment extends Fragment {
                     adapter.setRecipes(recipes);
                     adapter.notifyDataSetChanged();
                     restorePosition();
+                    onNetworkSuccess();
                 }
             });
         }
         return view;
+    }
+
+    private void onNetworkFailure() {
+        errorMessage.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    private void onNetworkRequest() {
+        errorMessage.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    private void onNetworkSuccess() {
+        errorMessage.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     private boolean isErrorPresent(RepositoryResponse repositoryResponse) {
@@ -117,9 +149,10 @@ public class SelectRecipeFragment extends Fragment {
             Timber.e("RepositoryResponse does not exist");
             result = true;
         } else if (repositoryResponse.getError() != null) {
-            Timber.e("RepositoryResponse does not exist");
+            Timber.e(repositoryResponse.getError());
             result = true;
         }
+        onNetworkFailure();
 
         return result;
     }
