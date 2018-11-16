@@ -1,4 +1,10 @@
 
+## Notes
+- Within the UI, network request status updates aren't handled precisely. 
+Specifically, the user may open the app, and very briefly notice the "network failed" screen. 
+This is probably due to the ViewModel LiveData not being updated frequently enough. 
+In reality, this check for network progress and status should be handled in the data layer ( Repository ) and passed up to the UI layer via the RepositoryResponse and not just simply in a generic "getError" method. 
+
 ## App Development in Reflection
 This app has been such an experience. 
 - Should have started with Dagger2 from the onset. This would have made testing a lot easier. 
