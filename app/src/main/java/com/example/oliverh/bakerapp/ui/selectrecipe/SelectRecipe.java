@@ -86,11 +86,13 @@ public class SelectRecipe extends AppCompatActivity implements
 
         switch (currentAction) {
             case INTENT_WIDGET_CONFIGURE:
+                Timber.d(getString(R.string.SELECT_RECIPE_INTENT_FORMULA_RECIPE_ID), INTENT_WIDGET_CONFIGURE, recipeId);
                 handleWidgetConfigurationIntent(recipeId);
                 break;
 
             case INTENT_ACTION_MAIN:
             default:
+                Timber.d(getString(R.string.SELECT_RECIPE_INTENT_FORMULA_RECIPE_ID), INTENT_ACTION_MAIN, recipeId);
                 handleActionMainIntent(recipeId);
         }
 
@@ -125,9 +127,6 @@ public class SelectRecipe extends AppCompatActivity implements
 
     private void handleActionMainIntent(int mRecipeId) {
         final Intent intent = new Intent(this, SelectRecipeDetails.class);
-
-        Timber.d("ACTION_MAIN Intent / RecipeId %d", mRecipeId);
-
         intent.putExtra(getString(R.string.BUNDLE_RECIPE_ID), mRecipeId);
         startActivity(intent);
     }
