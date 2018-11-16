@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
@@ -81,23 +80,23 @@ public class SelectRecipe extends AppCompatActivity implements
 
     @Override
     public void onListFragmentInteraction(Recipe recipe) {
-        Toast.makeText(this, recipe.getRecipeName(), Toast.LENGTH_SHORT).show();
-
         String currentAction = getIntent().getAction() == null ? "" : getIntent().getAction();
+
+        int recipeId = recipe.getId();
 
         switch (currentAction) {
             case INTENT_WIDGET_CONFIGURE:
-                handleWidgetConfigurationIntent(recipe);
+                handleWidgetConfigurationIntent(recipeId);
                 break;
 
             case INTENT_ACTION_MAIN:
             default:
-                handleActionMainIntent(recipe);
+                handleActionMainIntent(recipeId);
         }
 
     }
 
-    private void handleWidgetConfigurationIntent(Recipe recipe) {
+    private void handleWidgetConfigurationIntent(int mRecipeId) {
         setResult(RESULT_CANCELED);
 
         Context context = getApplicationContext();
@@ -109,13 +108,11 @@ public class SelectRecipe extends AppCompatActivity implements
                     AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
-        int recipeId = recipe.getId();
-
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget);
 
         Intent intent = new Intent(context, IngredientsRemoteViewsService.class);
-        intent.putExtra("WIDGET_RECIPE_ID", recipeId);
+        intent.putExtra("WIDGET_RECIPE_ID", mRecipeId);
         remoteViews.setRemoteAdapter(R.id.lv_widgetListContainer, intent);
 
         appWidgetManager.updateAppWidget(appWidgetID, remoteViews);
@@ -126,13 +123,12 @@ public class SelectRecipe extends AppCompatActivity implements
         finish();
     }
 
-    private void handleActionMainIntent(Recipe recipe) {
-        int recipeId = recipe.getId();
+    private void handleActionMainIntent(int mRecipeId) {
         final Intent intent = new Intent(this, SelectRecipeDetails.class);
 
-        Timber.d("ACTION_MAIN Intent / RecipeId %d", recipeId);
+        Timber.d("ACTION_MAIN Intent / RecipeId %d", mRecipeId);
 
-        intent.putExtra(getString(R.string.BUNDLE_RECIPE_ID), recipeId);
+        intent.putExtra(getString(R.string.BUNDLE_RECIPE_ID), mRecipeId);
         startActivity(intent);
     }
 }
