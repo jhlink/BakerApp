@@ -528,5 +528,7 @@
   <string name="network_error">Network Error: Failed to retrieve data. Please try again later.</string>
   <string name="BUNDLE_CONFIG_ACTIVITY_PKG_NAME">CONFIG_ACTIVITY_PKG_NAME</string>
   <string name="BUNDLE_APP_WIDGET_ID">APP_WIDGET_ID</string>
+    <string name="SHARED_PREF_FILE_ID">com.example.oliverh.bakerapp.widget_configs</string>
+    <string name="SHARED_PREF_WIDGET_DATA_KEY_FORMULA">WIDGET_%d_RECIPE_ID</string>
 
 </resources>

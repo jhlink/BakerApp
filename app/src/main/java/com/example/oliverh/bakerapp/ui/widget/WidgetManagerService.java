@@ -17,6 +17,7 @@ import timber.log.Timber;
 
 public class WidgetManagerService extends IntentService {
     public static final String ACTION_CONFIGURE_NEW_INGREDIENTS = "com.example.oliverh.bakerapp.action.configure_new_ingredients";
+    public static final String ACTION_UPDATE_INGREDIENTS = "com.example.oliverh.bakerapp.action.update_ingredients";
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -32,6 +33,8 @@ public class WidgetManagerService extends IntentService {
             if (ACTION_CONFIGURE_NEW_INGREDIENTS.equals(action)) {
                 Bundle bundle = intent.getExtras();
                 handleNewWidgetConfig(bundle);
+            } else if (ACTION_UPDATE_INGREDIENTS.equals(action)) {
+                handleIngredientWidgetUpdate(this);
             }
         }
     }
@@ -43,12 +46,17 @@ public class WidgetManagerService extends IntentService {
         context.startService(intent);
     }
 
+    public static void startActionUpdateIngredientsWidgets(Context context) {
+        Intent intent = new Intent(context, WidgetManagerService.class);
+        intent.setAction(ACTION_UPDATE_INGREDIENTS);
+        context.startService(intent);
+    }
+
     private void handleNewWidgetConfig(Bundle configParams) {
-        String callingPackageName = configParams.getString(this.getString(R.string.BUNDLE_CONFIG_ACTIVITY_PKG_NAME));
         int recipeId = configParams.getInt(this.getString(R.string.EXTRA_WIDGET_RECIPE_ID));
         int appWidgetId = configParams.getInt(this.getString(R.string.BUNDLE_APP_WIDGET_ID));
 
-        Timber.d("RecipeID %d, CallerPackageName %s, widgetID %d", recipeId, callingPackageName, appWidgetId);
+        Timber.d("RecipeID %d, widgetID %d", recipeId, appWidgetId);
 
         // Save Widget configuration into SharedPreferences
         SharedPreferences prefs = this.getSharedPreferences("com.example.oliverh.bakerapp.widget_configs", 0);
@@ -59,13 +67,23 @@ public class WidgetManagerService extends IntentService {
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, IngredientsWidget.class));
-
-        IngredientsWidget.updateAppWidget(this, appWidgetManager, appWidgetId, recipeId, callingPackageName);
-
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.lv_widgetListContainer);
+
+        IngredientsWidget.updateAppWidget(this, appWidgetManager, appWidgetId, recipeId);
     }
 
-    public static void startActionUpdateIngredientsWidgets(Context context) {
-    }
+    public void handleIngredientWidgetUpdate(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, IngredientsWidget.class));
 
+        SharedPreferences prefs = context.getSharedPreferences(getString(R.string.SHARED_PREF_FILE_ID), 0);
+
+        for (int appWidgetId : appWidgetIds) {
+            String formattedStringKey = String.format(Locale.ENGLISH, getString(R.string.SHARED_PREF_WIDGET_DATA_KEY_FORMULA), appWidgetId);
+            int recipeID = prefs.getInt(formattedStringKey, AppWidgetManager.INVALID_APPWIDGET_ID);
+
+            Timber.d("SharedPreference Key %s / RecipeID %d", formattedStringKey, recipeID);
+            IngredientsWidget.updateIngredientListWidgets(context, appWidgetManager, appWidgetId, recipeID);
+        }
+    }
 }

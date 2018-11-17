@@ -112,7 +112,6 @@ public class SelectRecipe extends AppCompatActivity implements
 
         // Assemble Bundle and send to Widget service
         Bundle parameterBundle = new Bundle();
-        parameterBundle.putString(getString(R.string.BUNDLE_CONFIG_ACTIVITY_PKG_NAME), this.getPackageName());
         parameterBundle.putInt(getString(R.string.EXTRA_WIDGET_RECIPE_ID), mRecipeId);
         parameterBundle.putInt(getString(R.string.BUNDLE_APP_WIDGET_ID), appWidgetID);
 

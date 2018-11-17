@@ -4,9 +4,12 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.widget.RemoteViews;
 
 import com.example.oliverh.bakerapp.R;
+
+import timber.log.Timber;
 
 /**
  * Implementation of App Widget functionality.
@@ -14,27 +17,27 @@ import com.example.oliverh.bakerapp.R;
 public class IngredientsWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId, int recipeId, String callingPackageName) {
+                                int appWidgetId, int recipeId) {
 
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(callingPackageName, R.layout.ingredients_widget);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget);
 
         Intent intent = new Intent(context, IngredientsRemoteViewsService.class);
-        intent.putExtra(context.getString(R.string.BUNDLE_RECIPE_ID), recipeId);
+        Timber.d("WidgetID %d, RecipeID Validation %d", appWidgetId, recipeId);
+        intent.setData(Uri.fromParts("content", String.valueOf(recipeId), null));
         views.setRemoteAdapter(R.id.lv_widgetListContainer, intent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // There may be multiple widgets active, so update all of them
-        //WidgetManagerService.startActionUpdateIngredientsWidgets(context);
-        //for (int appWidgetId : appWidgetIds) {
-        //    updateAppWidget(context, appWidgetManager, appWidgetId);
-        //}
+        WidgetManagerService.startActionUpdateIngredientsWidgets(context);
+    }
+
+    public static void updateIngredientListWidgets(Context context, AppWidgetManager appWidgetManager, int appWidgetId, int mRecipeId) {
+        updateAppWidget(context, appWidgetManager, appWidgetId, mRecipeId);
     }
 
     @Override
