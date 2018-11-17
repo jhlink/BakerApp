@@ -29,7 +29,6 @@ public class SelectRecipeScreenTest {
     public void checkIfRecipesAreLoadedInPortrait() {
         setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         onView(withId(R.id.rv_generic_container)).check(matches(isDisplayed()));
-
         onView(withId(R.id.rv_generic_container)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withText("Recipe Ingredients")).check(matches(isDisplayed()));
@@ -39,7 +38,6 @@ public class SelectRecipeScreenTest {
     public void checkIfRecipesAreLoadedInLandscape() {
         setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         onView(withId(R.id.rv_generic_container)).check(matches(isDisplayed()));
-
         onView(withId(R.id.rv_generic_container)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         onView(withText("Recipe Ingredients")).check(matches(isDisplayed()));
