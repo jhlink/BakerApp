@@ -526,5 +526,7 @@
   <string name="next_step">Next Step</string>
   <string name="add_widget">Add widget</string>
   <string name="network_error">Network Error: Failed to retrieve data. Please try again later.</string>
+  <string name="BUNDLE_CONFIG_ACTIVITY_PKG_NAME">CONFIG_ACTIVITY_PKG_NAME</string>
+  <string name="BUNDLE_APP_WIDGET_ID">APP_WIDGET_ID</string>
 
 </resources>

@@ -4,12 +4,11 @@ import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.RemoteViews;
 
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.Recipe;
 import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetails;
-import com.example.oliverh.bakerapp.ui.widget.IngredientsRemoteViewsService;
+import com.example.oliverh.bakerapp.ui.widget.WidgetManagerService;
 import com.facebook.stetho.Stetho;
 
 import timber.log.Timber;
@@ -106,16 +105,18 @@ public class SelectRecipe extends AppCompatActivity implements
         if ( widgetExtras != null ) {
             appWidgetID = widgetExtras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
+        } else {
+            finish();
+            return;
         }
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        // Assemble Bundle and send to Widget service
+        Bundle parameterBundle = new Bundle();
+        parameterBundle.putString(getString(R.string.BUNDLE_CONFIG_ACTIVITY_PKG_NAME), this.getPackageName());
+        parameterBundle.putInt(getString(R.string.EXTRA_WIDGET_RECIPE_ID), mRecipeId);
+        parameterBundle.putInt(getString(R.string.BUNDLE_APP_WIDGET_ID), appWidgetID);
 
-        //  Configure widget with select recipeID
-        RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.ingredients_widget);
-        Intent intent = new Intent(this, IngredientsRemoteViewsService.class);
-        intent.putExtra(getString(R.string.EXTRA_WIDGET_RECIPE_ID), mRecipeId);
-        remoteViews.setRemoteAdapter(R.id.lv_widgetListContainer, intent);
-        appWidgetManager.updateAppWidget(appWidgetID, remoteViews);
+        WidgetManagerService.configureNewIngredientsList(this, parameterBundle);
 
         Intent resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetID);

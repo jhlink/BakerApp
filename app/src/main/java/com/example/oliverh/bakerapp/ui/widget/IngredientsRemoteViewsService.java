@@ -18,6 +18,7 @@ import java.util.List;
 import timber.log.Timber;
 
 public class IngredientsRemoteViewsService extends RemoteViewsService {
+
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new IngredientsRemoteViewsFactory(getApplicationContext(), intent);
