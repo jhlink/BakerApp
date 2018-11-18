@@ -4,10 +4,13 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.RemoteViews;
 
 import com.example.oliverh.bakerapp.R;
+
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -38,6 +41,21 @@ public class IngredientsWidget extends AppWidgetProvider {
 
     public static void updateIngredientListWidgets(Context context, AppWidgetManager appWidgetManager, int appWidgetId, int mRecipeId) {
         updateAppWidget(context, appWidgetManager, appWidgetId, mRecipeId);
+    }
+
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.SHARED_PREF_FILE_ID), 0);
+        String sharedPrefStringKeyTemplate = context.getString(R.string.SHARED_PREF_WIDGET_DATA_KEY_FORMULA);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        for (int id : appWidgetIds) {
+            String formattedStringKey = String.format(Locale.ENGLISH, sharedPrefStringKeyTemplate, id);
+            editor.remove(formattedStringKey);
+        }
+        editor.apply();
+
+        super.onDeleted(context, appWidgetIds);
     }
 
     @Override
