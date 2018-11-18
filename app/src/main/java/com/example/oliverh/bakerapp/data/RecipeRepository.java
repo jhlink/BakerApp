@@ -66,6 +66,7 @@ public class RecipeRepository {
                     @Override
                     public RepositoryResponse apply(List<Recipe> recipes) {
                         if (recipes.isEmpty()) {
+                            // On initial load, there is no data. Doesn't mean that this should be an error.
                             return new RepositoryResponse(new IOException("No Data"));
                         }
                         return new RepositoryResponse(recipes);
