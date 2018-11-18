@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.example.oliverh.bakerapp.Constants;
 import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.data.network.RepositoryResponse;
@@ -32,12 +33,11 @@ public class SelectRecipeDetails extends AppCompatActivity
     private static final int LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID = R.id.land_recipe_detail_collection_container;
     private static final int RECIPE_DETAIL_COLLECTION_CONTAINER_ID = R.id.recipe_detail_collection_container;
 
-    //  TODO: Implement onRecipeDetail selection callback -> Pass recipeId / stepId to
-    //      RecipeStep and Video fragment collection container id
     private static final int TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID = R.id.tbl_recipeDetailsListFrag;
     private static final int TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID = R.id.tbl_recipeStepTextFrag;
     private static final int TABLET_RECIPE_STEP_VIDEO_COLLECTION_CONTAINER_ID = R.id.tbl_recipeStepVideoFrag;
     private static final int TABLET_RECIPE_INGREDIENT_COLLECTION_CONTAINER_ID = R.id.tbl_recipeIngredientFrag;
+
     private int recipeId;
     private boolean isTablet = false;
     private ViewRecipeStepViewModel viewRecipeStepViewModel;
@@ -51,15 +51,13 @@ public class SelectRecipeDetails extends AppCompatActivity
     @Nullable
     FrameLayout detailsLayout;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.master_recipe_step_list);
 
         ButterKnife.bind(this);
-        recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
+        recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), Constants.INVALID_RECIPE_ID);
         isTablet = detailsLayout != null;
 
         Timber.d("BackStack Count %d ", getSupportFragmentManager().getBackStackEntryCount());
