@@ -29,8 +29,6 @@ public class SelectRecipeDetails extends AppCompatActivity
         implements SelectRecipeDetailsFragment.OnDetailInteractionListener,
         ViewRecipeStepTextFragment.OnFragmentInteractionListener {
 
-    public static final String RECIPE_DETAILS_FRAGMENT_TAG = "RECIPE_DETAILS_FRAGMENT";
-
     private static final int LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID = R.id.land_recipe_detail_collection_container;
     private static final int RECIPE_DETAIL_COLLECTION_CONTAINER_ID = R.id.recipe_detail_collection_container;
 
@@ -88,18 +86,16 @@ public class SelectRecipeDetails extends AppCompatActivity
                     masterListFrag.setRecipeId(recipeId);
                 }
 
-                getSupportFragmentManager().beginTransaction()
-                        .replace(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID,
-                                masterListFrag,
-                                RECIPE_DETAILS_FRAGMENT_TAG)
-                        .commit();
-            }
+            getSupportFragmentManager().beginTransaction()
+                    .replace(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID,
+                            masterListFrag)
+                    .commit();
 
         } else {
 
             int containerId = getContainerResourceIDForCurrentOrientationState();
 
-            SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_DETAILS_FRAGMENT_TAG);
+            SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(containerId);
             if (fragment == null) {
                 Timber.d("Create fragment.");
                 fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
