@@ -2,12 +2,15 @@ package com.example.oliverh.bakerapp;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.example.oliverh.bakerapp.ui.selectrecipe.SelectRecipe;
+import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetails;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -48,7 +51,7 @@ public class ValidateIntentsFromSelectRecipe {
 
         // This is really, really, really bad.
         //  It is assumed that there will be data supplied, and that the first element clicked possesses a recipe ID of 1.
-        //  In production this would not be a good solution. Mocking / stubbing should be the way to go.
+        //  In production this would not be a good solution. Mocking / stubbing / Dependency Injection should be the way to go.
         intended(hasExtraWithKey(RECIPE_BUNDLE_KEY));
     }
 }
