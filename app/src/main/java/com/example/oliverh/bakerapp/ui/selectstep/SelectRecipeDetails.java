@@ -50,7 +50,6 @@ public class SelectRecipeDetails extends AppCompatActivity
     @Nullable
     FrameLayout recipeDetailsContainer;
 
-
     @BindView(R.id.tbl_recipeIngredientFrag)
     @Nullable
     FrameLayout layout;
@@ -63,57 +62,37 @@ public class SelectRecipeDetails extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.master_recipe_step_list);
-
         ButterKnife.bind(this);
-        recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), Constants.INVALID_RECIPE_ID);
-        isTablet = detailsLayout != null;
+
+        recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID),
+                Constants.INVALID_RECIPE_ID);
 
         Timber.d("BackStack Count %d ", getSupportFragmentManager().getBackStackEntryCount());
 
-        if (isTablet) {
-            if (savedInstanceState == null) {
-                Timber.d("We are in Tablet mode w/ id: %d.", recipeId);
-                // Handle Master List Frag
-                SelectRecipeDetailsFragment masterListFrag = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID);
+        int containerId = getContainerResourceIDForCurrentOrientationState();
 
-                if (masterListFrag == null) {
-                    Timber.d("Create fragment.");
-                    masterListFrag = SelectRecipeDetailsFragment.newInstance(recipeId);
-                } else {
-                    Timber.d("Found fragment.");
-                    Bundle masterListFragBundle = new Bundle();
-                    masterListFragBundle.putInt(SelectRecipeDetailsFragment.ARG_RECIPE_ID, recipeId);
-                    masterListFrag.setRecipeId(recipeId);
-                }
+        SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(containerId);
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID,
-                            masterListFrag)
-                    .commit();
-
+        if (fragment == null) {
+            Timber.d("Create fragment.");
+            fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
         } else {
-
-            int containerId = getContainerResourceIDForCurrentOrientationState();
-
-            SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(containerId);
-            if (fragment == null) {
-                Timber.d("Create fragment.");
-                fragment = SelectRecipeDetailsFragment.newInstance(recipeId);
-            } else {
-                Timber.d("Found fragment.");
-                fragment.setRecipeId(recipeId);
-            }
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(containerId, fragment)
-                    .commit();
+            Timber.d("Found fragment.");
+            fragment.setRecipeId(recipeId);
         }
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(containerId, fragment)
+                .commit();
     }
 
     private int getContainerResourceIDForCurrentOrientationState() {
         int targetContainerID = RECIPE_DETAIL_COLLECTION_CONTAINER_ID;
         if (landRecipeDetailsContainer != null) {
             targetContainerID = LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID;
+        } else if (detailsLayout != null) {
+            targetContainerID = TABLET_RECIPE_DETAILS_COLLECTION_CONTAINER_ID;
+            isTablet = true;
         }
         return targetContainerID;
     }
@@ -263,6 +242,5 @@ public class SelectRecipeDetails extends AppCompatActivity
             fragment.setAndInitializePlayer(bundle);
         }
     }
-
 }
 
