@@ -76,7 +76,7 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
 
                 // Check if we're in landscape state
                 if (!landscape_videoFullScreen) {
-                    String recipeStepHeader = String.format("Step %d", recipeStep.getStepIndex() + 1);
+                    String recipeStepHeader = String.format("Step %d", recipeStep.getStepIndex());
                     String recipeDescription = recipeStep.getDescription();
                     handleTextPayload(recipeStepHeader, recipeDescription);
                 }

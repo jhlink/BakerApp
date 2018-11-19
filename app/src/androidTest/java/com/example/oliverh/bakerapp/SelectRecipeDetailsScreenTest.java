@@ -91,4 +91,13 @@ public class SelectRecipeDetailsScreenTest {
         onView(withSubstring("unsalted butter")).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void checkIfRecipeStepIsLoaded() {
+        onView(withId(R.id.rv_generic_container)).perform(RecyclerViewActions.actionOnItem(withSubstring("Step 1"), click()));
+
+        // This test isn't very flexible given that we assume that the recipe in element 1 is
+        //  a recipe for Brownies and a constant, hardcoded string is used to validate
+        //  that the Recipe Step is properly loaded.
+        onView(withSubstring("Step 1")).check(matches(isDisplayed()));
+    }
 }
