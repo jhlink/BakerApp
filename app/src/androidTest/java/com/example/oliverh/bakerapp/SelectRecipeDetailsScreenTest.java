@@ -29,6 +29,7 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.isInte
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withSubstring;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.IsNot.not;
 
@@ -77,6 +78,17 @@ public class SelectRecipeDetailsScreenTest {
         onView(withId(R.id.rv_generic_container)).check(matches(isDisplayed()));
 
         onView(withText("Recipe Introduction")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void checkIfIngredientListIsLoaded() {
+        onView(withId(R.id.rv_generic_container)).perform(RecyclerViewActions.actionOnItem(withText("Recipe Ingredients"), click()));
+        onView(withId(R.id.rv_generic_container)).perform(RecyclerViewActions.scrollToPosition(5));
+
+        // This test isn't very flexible given that we assume that the recipe in element 1 is
+        //  a recipe for Brownies and a constant, hardcoded string is used to validate
+        //  that the Ingredients list is properly loaded.
+        onView(withSubstring("unsalted butter")).check(matches(isDisplayed()));
     }
 
 }
