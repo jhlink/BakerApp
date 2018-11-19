@@ -9,6 +9,7 @@ import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.DisplayMetrics;
 
 import com.example.oliverh.bakerapp.data.RecipeRepository;
 import com.example.oliverh.bakerapp.data.database.AppDatabase;
@@ -83,7 +84,10 @@ public class SelectRecipeDetailsScreenTest {
     @Test
     public void checkIfIngredientListIsLoaded() {
         onView(withId(R.id.rv_generic_container)).perform(RecyclerViewActions.actionOnItem(withText("Recipe Ingredients"), click()));
-        onView(withId(R.id.rv_generic_container)).perform(RecyclerViewActions.scrollToPosition(5));
+
+        if (!isScreenWidth600dp()) {
+            onView(withId(R.id.rv_generic_container)).perform(RecyclerViewActions.scrollToPosition(5));
+        }
 
         // This test isn't very flexible given that we assume that the recipe in element 1 is
         //  a recipe for Brownies and a constant, hardcoded string is used to validate
@@ -98,6 +102,15 @@ public class SelectRecipeDetailsScreenTest {
         // This test isn't very flexible given that we assume that the recipe in element 1 is
         //  a recipe for Brownies and a constant, hardcoded string is used to validate
         //  that the Recipe Step is properly loaded.
-        onView(withSubstring("Step 1")).check(matches(isDisplayed()));
+        onView(withSubstring("Preheat the oven")).check(matches(isDisplayed()));
+    }
+
+    private boolean isScreenWidth600dp() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        mIntentRule.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        float widthDp = displayMetrics.widthPixels / displayMetrics.density;
+        float heightDp = displayMetrics.heightPixels / displayMetrics.density;
+        float screenSw = Math.min(widthDp, heightDp);
+        return screenSw >= 600;
     }
 }
