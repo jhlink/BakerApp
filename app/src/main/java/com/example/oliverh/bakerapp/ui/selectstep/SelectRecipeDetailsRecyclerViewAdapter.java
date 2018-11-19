@@ -11,6 +11,8 @@ import com.example.oliverh.bakerapp.R;
 import com.example.oliverh.bakerapp.data.database.RecipeStep;
 import com.example.oliverh.bakerapp.ui.selectstep.SelectRecipeDetailsFragment.OnDetailInteractionListener;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -53,7 +55,11 @@ public class SelectRecipeDetailsRecyclerViewAdapter extends RecyclerView.Adapter
             default:
                 // Pass 'Recipe Steps' text to ViewHolder.
                 RecipeStep step = (RecipeStep) mValues.get(position);
-                content = String.format("Recipe Step %d.", step.getStepIndex());
+                if (step.getStepIndex() == 0) {
+                    content = step.getShortDescription();
+                } else {
+                    content = String.format(Locale.ENGLISH, "Step %d : %s", step.getStepIndex(), step.getShortDescription());
+                }
                 break;
         }
         holder.bindString(content);
