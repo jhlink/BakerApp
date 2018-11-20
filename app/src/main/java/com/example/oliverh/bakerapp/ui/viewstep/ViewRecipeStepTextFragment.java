@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
@@ -26,8 +27,11 @@ import butterknife.OnClick;
 public class ViewRecipeStepTextFragment extends Fragment {
     public static final String ARG_STEP_HEADER = "header";
     public static final String ARG_STEP_DESC = "desc";
+    public static final String ARG_IS_NEXT_BTN_VISIBLE = "isTablet";
+
     private String mHeader;
     private String mDesc;
+    private boolean hideNextBtn;
     private OnFragmentInteractionListener mListener;
 
     @BindView(R.id.tv_recipeStepHeader)
@@ -37,6 +41,11 @@ public class ViewRecipeStepTextFragment extends Fragment {
     @BindView(R.id.tv_recipeStepDesc)
     @Nullable
     TextView recipeStepDescription;
+
+    @BindView(R.id.btn_nextStep)
+    @Nullable
+    Button nextStepBtn;
+
 
     public ViewRecipeStepTextFragment() {
         // Required empty public constructor
@@ -50,11 +59,13 @@ public class ViewRecipeStepTextFragment extends Fragment {
      * @param desc   Parameter 2.
      * @return A new instance of fragment ViewRecipeStepTextFragment.
      */
-    public static ViewRecipeStepTextFragment newInstance(String header, String desc) {
+    public static ViewRecipeStepTextFragment newInstance(String header, String desc, boolean
+            shouldHideBtn) {
         ViewRecipeStepTextFragment fragment = new ViewRecipeStepTextFragment();
         Bundle args = new Bundle();
         args.putString(ARG_STEP_HEADER, header);
         args.putString(ARG_STEP_DESC, desc);
+        args.putBoolean(ARG_IS_NEXT_BTN_VISIBLE, shouldHideBtn);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,6 +76,7 @@ public class ViewRecipeStepTextFragment extends Fragment {
         if (getArguments() != null) {
             mHeader = getArguments().getString(ARG_STEP_HEADER);
             mDesc = getArguments().getString(ARG_STEP_DESC);
+            hideNextBtn = getArguments().getBoolean(ARG_IS_NEXT_BTN_VISIBLE);
         }
     }
 
@@ -76,13 +88,14 @@ public class ViewRecipeStepTextFragment extends Fragment {
 
         recipeStepHeader.setText(mHeader);
         recipeStepDescription.setText(mDesc);
+        hideNextBtn(hideNextBtn);
 
         return view;
     }
 
     @OnClick(R.id.btn_nextStep)
     public void onButtonPressed() {
-        if (mListener != null) {
+        if (!hideNextBtn && mListener != null) {
             mListener.OnNextStepFragmentInteraction();
         }
     }
@@ -91,10 +104,16 @@ public class ViewRecipeStepTextFragment extends Fragment {
         if (bundle != null) {
             mHeader = bundle.getString(ARG_STEP_HEADER);
             mDesc = bundle.getString(ARG_STEP_DESC);
+            hideNextBtn = bundle.getBoolean(ARG_IS_NEXT_BTN_VISIBLE);
 
             recipeStepHeader.setText(mHeader);
             recipeStepDescription.setText(mDesc);
+            hideNextBtn(hideNextBtn);
         }
+    }
+
+    private void hideNextBtn(boolean shouldBeHidden) {
+        nextStepBtn.setVisibility(shouldBeHidden ? View.GONE : View.VISIBLE);
     }
 
     @Override
