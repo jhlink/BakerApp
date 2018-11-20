@@ -154,7 +154,6 @@ public class SelectRecipeDetailsFragment extends Fragment {
         }
     }
 
-
     public void setRecipeId(int recipeId) {
         this.recipeId = recipeId;
     }

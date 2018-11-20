@@ -70,6 +70,7 @@ public class SelectRecipeDetails extends AppCompatActivity
         Timber.d("BackStack Count %d ", getSupportFragmentManager().getBackStackEntryCount());
 
         int containerId = getContainerResourceIDForCurrentOrientationState();
+        initializeTabletRecipeStepLayout();
 
         SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(containerId);
 
@@ -84,6 +85,11 @@ public class SelectRecipeDetails extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(containerId, fragment)
                 .commit();
+    }
+
+    private void initializeTabletRecipeStepLayout() {
+        showStepDetails();
+        handleTextPayload("", "Select a Step!");
     }
 
     private int getContainerResourceIDForCurrentOrientationState() {
@@ -196,6 +202,8 @@ public class SelectRecipeDetails extends AppCompatActivity
 
         if (viewIngredientsFragment != null) {
             fragmentTransaction.hide(viewIngredientsFragment);
+        }
+        if (layout != null) {
             layout.setVisibility(View.GONE);
         }
 
@@ -212,8 +220,10 @@ public class SelectRecipeDetails extends AppCompatActivity
                 .hide(recipeStepTextFragment);
 
         if (viewIngredientsFragment != null) {
-            layout.setVisibility(View.VISIBLE);
             fragmentTransaction.show(viewIngredientsFragment);
+        }
+        if (layout != null) {
+            layout.setVisibility(View.VISIBLE);
         }
 
         fragmentTransaction.commit();
@@ -226,7 +236,7 @@ public class SelectRecipeDetails extends AppCompatActivity
         Bundle bundle = new Bundle();
         bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_HEADER, nullSafeHeader);
         bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_DESC, nullSafeDesc);
-
+        bundle.putBoolean(ViewRecipeStepTextFragment.ARG_IS_NEXT_BTN_VISIBLE, isTablet);
 
         ViewRecipeStepTextFragment fragment = (ViewRecipeStepTextFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID);
         fragment.updateFragmentUI(bundle);
