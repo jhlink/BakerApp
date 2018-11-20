@@ -121,23 +121,9 @@ public class SelectRecipeDetails extends AppCompatActivity
         if (isTablet) {
             if (position == 0) {
                 showIngredients();
-                ViewIngredientsFragment viewIngredientsFragment = ViewIngredientsFragment.newInstance(recipeId);
-
-                getSupportFragmentManager().executePendingTransactions();
-
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.tbl_recipeIngredientFrag, viewIngredientsFragment)
-                        .commitNow();
-
+                initializeIngredientsFragment();
             } else {
-                // Request for data given recipeId and stepId
-                Timber.d("RecipeId: %d, StepId: %d", recipeId, stepId);
-                if (viewRecipeStepViewModel == null) {
-                    ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
-                    viewRecipeStepViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
-                } else {
-                    viewRecipeStepViewModel.queryRecipe(recipeId, stepId);
-                }
+                initializeViewModel();
 
                 viewRecipeStepViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
                     @Override
@@ -178,6 +164,29 @@ public class SelectRecipeDetails extends AppCompatActivity
 
             Timber.d("Launch ViewRecipeStepHolder activity - recipeId: %d, stepId: %d, state: %d", recipeId, stepId, vsState);
             startActivity(intent);
+        }
+    }
+
+    private void initializeIngredientsFragment() {
+        ViewIngredientsFragment viewIngredientsFragment = ViewIngredientsFragment.newInstance(recipeId);
+
+        getSupportFragmentManager().executePendingTransactions();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.tbl_recipeIngredientFrag, viewIngredientsFragment)
+                .commitNow();
+
+    }
+
+    private void initializeViewModel() {
+        // Initialize view model or refresh recipe data.
+        Timber.d("RecipeId: %d, StepId: %d", recipeId, stepId);
+
+        if (viewRecipeStepViewModel == null) {
+            ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
+            viewRecipeStepViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
+        } else {
+            viewRecipeStepViewModel.queryRecipe(recipeId, stepId);
         }
     }
 
