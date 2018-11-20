@@ -88,8 +88,10 @@ public class SelectRecipeDetails extends AppCompatActivity
     }
 
     private void initializeTabletRecipeStepLayout() {
-        showStepDetails();
-        handleTextPayload("", "Select a Step!");
+        if (isTablet) {
+            showStepDetails();
+            handleTextPayload("", "Select a Step!");
+        }
     }
 
     private int getContainerResourceIDForCurrentOrientationState() {
@@ -172,6 +174,7 @@ public class SelectRecipeDetails extends AppCompatActivity
             Intent intent = new Intent(this, ViewRecipeStepHolder.class);
             intent.putExtra(recipeIdBundleTag, recipeId);
             intent.putExtra(stepIdBundleTag, stepId);
+            intent.putExtra(ViewRecipeStepTextFragment.ARG_IS_NEXT_BTN_VISIBLE, isTablet);
             intent.putExtra(viewStepState, vsState);
 
             Timber.d("Launch ViewRecipeStepHolder activity - recipeId: %d, stepId: %d, state: %d", recipeId, stepId, vsState);

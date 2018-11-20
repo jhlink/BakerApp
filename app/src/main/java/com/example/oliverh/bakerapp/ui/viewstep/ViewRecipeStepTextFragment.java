@@ -88,7 +88,7 @@ public class ViewRecipeStepTextFragment extends Fragment {
 
         recipeStepHeader.setText(mHeader);
         recipeStepDescription.setText(mDesc);
-        hideNextBtn(hideNextBtn);
+        setNxtBtnVisibility(hideNextBtn);
 
         return view;
     }
@@ -108,11 +108,11 @@ public class ViewRecipeStepTextFragment extends Fragment {
 
             recipeStepHeader.setText(mHeader);
             recipeStepDescription.setText(mDesc);
-            hideNextBtn(hideNextBtn);
+            setNxtBtnVisibility(hideNextBtn);
         }
     }
 
-    private void hideNextBtn(boolean shouldBeHidden) {
+    private void setNxtBtnVisibility(boolean shouldBeHidden) {
         nextStepBtn.setVisibility(shouldBeHidden ? View.GONE : View.VISIBLE);
     }
 

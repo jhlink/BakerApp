@@ -25,6 +25,7 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
     private int recipeId;
     private int stepId;
     private int vsState;
+    private boolean isTablet;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
         recipeId = getIntent().getIntExtra(getString(R.string.BUNDLE_RECIPE_ID), -1);
         stepId = getIntent().getIntExtra(getString(R.string.BUNDLE_STEP_ID), -1);
         vsState = getIntent().getIntExtra(getString(R.string.BUNDLE_STEP_STATE), 0);
+        isTablet = getIntent().getBooleanExtra(ViewRecipeStepTextFragment.ARG_IS_NEXT_BTN_VISIBLE, false);
 
         switch ( vsState ) {
             case VIEW_RECIPE_STEP_INGREDIENTS:
@@ -94,7 +96,7 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
         Bundle bundle = new Bundle();
         bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_HEADER, nullSafeHeader);
         bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_DESC, nullSafeDesc);
-
+        bundle.putBoolean(ViewRecipeStepTextFragment.ARG_IS_NEXT_BTN_VISIBLE, isTablet);
 
         ViewRecipeStepTextFragment fragment = (ViewRecipeStepTextFragment) getSupportFragmentManager().findFragmentById(R.id.recipeStepTextFragment);
         fragment.updateFragmentUI(bundle);
