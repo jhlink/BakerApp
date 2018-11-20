@@ -40,7 +40,7 @@ public class SelectRecipeDetails extends AppCompatActivity
     private int recipeId;
     private boolean isTablet = false;
     private ViewRecipeStepViewModel viewRecipeStepViewModel;
-    private int stepId;
+    private int stepId = 0;
 
     @BindView(LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID)
     @Nullable
@@ -70,7 +70,6 @@ public class SelectRecipeDetails extends AppCompatActivity
         Timber.d("BackStack Count %d ", getSupportFragmentManager().getBackStackEntryCount());
 
         int containerId = getContainerResourceIDForCurrentOrientationState();
-        initializeTabletRecipeStepLayout();
 
         SelectRecipeDetailsFragment fragment = (SelectRecipeDetailsFragment) getSupportFragmentManager().findFragmentById(containerId);
 
@@ -85,12 +84,15 @@ public class SelectRecipeDetails extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(containerId, fragment)
                 .commit();
+
+        initializeTabletRecipeStepLayout();
+
     }
 
     private void initializeTabletRecipeStepLayout() {
         if (isTablet) {
             showStepDetails();
-            handleTextPayload("", "Select a Step!");
+            initializeViewModel();
         }
     }
 
@@ -113,7 +115,11 @@ public class SelectRecipeDetails extends AppCompatActivity
 
     @Override
     public void onDetailInteractionListener(int position) {
-        stepId = position - 1;
+        if (stepId == (position - 1)) {
+            return;
+        } else {
+            stepId = position - 1;
+        }
         String recipeIdBundleTag = getString(R.string.BUNDLE_RECIPE_ID);
         String stepIdBundleTag = getString(R.string.BUNDLE_STEP_ID);
         String viewStepState = getString(R.string.BUNDLE_STEP_STATE);
@@ -123,27 +129,8 @@ public class SelectRecipeDetails extends AppCompatActivity
                 showIngredients();
                 initializeIngredientsFragment();
             } else {
-                initializeViewModel();
-
-                viewRecipeStepViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
-                    @Override
-                    public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
-                        if (repositoryResponse.getError() != null) {
-                            Timber.d(repositoryResponse.getError());
-                            return;
-                        }
-
-                        RecipeStep payload = (RecipeStep) repositoryResponse.getObject();
-
-                        String recipeStepHeader = String.format("Step %d", payload.getStepIndex() + 1);
-                        String recipeDescription = payload.getDescription();
-
-                        Timber.d("Selected query result" + payload.toString());
-                        showStepDetails();
-                        handleTextPayload(recipeStepHeader, recipeDescription);
-                        handleVideoUrl(payload.getVideoUrl());
-                    }
-                });
+                Timber.d("Query Recipe");
+                viewRecipeStepViewModel.queryRecipe(recipeId, stepId);
             }
         } else {
             int vsState;
@@ -183,10 +170,30 @@ public class SelectRecipeDetails extends AppCompatActivity
         Timber.d("RecipeId: %d, StepId: %d", recipeId, stepId);
 
         if (viewRecipeStepViewModel == null) {
+            Timber.d("Validate initialization");
             ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
             viewRecipeStepViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
-        } else {
-            viewRecipeStepViewModel.queryRecipe(recipeId, stepId);
+
+            viewRecipeStepViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
+                @Override
+                public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+                    if (repositoryResponse.getError() != null) {
+                        Timber.d(repositoryResponse.getError());
+                        return;
+                    }
+
+                    RecipeStep payload = (RecipeStep) repositoryResponse.getObject();
+
+                    String recipeStepHeader = String.format("Step %d", payload.getStepIndex() + 1);//
+                    String recipeDescription = payload.getDescription();
+
+                    Timber.d("Selected query result" + payload.toString());
+                    showStepDetails();
+                    handleTextPayload(recipeStepHeader, recipeDescription);
+                    handleVideoUrl(payload.getVideoUrl());
+                }
+            });
+
         }
     }
 
@@ -202,11 +209,14 @@ public class SelectRecipeDetails extends AppCompatActivity
         if (viewIngredientsFragment != null) {
             fragmentTransaction.hide(viewIngredientsFragment);
         }
+
+        fragmentTransaction.commit();
+
         if (layout != null) {
             layout.setVisibility(View.GONE);
         }
 
-        fragmentTransaction.commit();
+
     }
 
     private void showIngredients() {
@@ -214,15 +224,17 @@ public class SelectRecipeDetails extends AppCompatActivity
         ViewRecipeStepTextFragment recipeStepTextFragment = (ViewRecipeStepTextFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID);
         ViewIngredientsFragment viewIngredientsFragment = (ViewIngredientsFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_INGREDIENT_COLLECTION_CONTAINER_ID);
 
+        if (layout != null) {
+            layout.setVisibility(View.VISIBLE);
+        }
+
+
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction()
                 .hide(recipeVideoFragment)
                 .hide(recipeStepTextFragment);
 
         if (viewIngredientsFragment != null) {
             fragmentTransaction.show(viewIngredientsFragment);
-        }
-        if (layout != null) {
-            layout.setVisibility(View.VISIBLE);
         }
 
         fragmentTransaction.commit();

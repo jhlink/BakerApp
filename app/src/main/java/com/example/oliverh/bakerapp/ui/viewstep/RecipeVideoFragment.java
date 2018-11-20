@@ -77,7 +77,6 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         if (getArguments() != null) {
             mVideoUrl = getArguments().getString(ARGS_VIDEO_URL);
 
@@ -109,6 +108,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
             createAndSetMediaSource();
         }
     }
+
     private void initializePlayer(Context context) {
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
@@ -166,13 +166,17 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     }
 
     private void createAndSetMediaSource() {
-        if (mVideoUrl != null) {
+        Timber.d("Result of mVideoUrl - " + mVideoUrl);
+        if (mVideoUrl != null && !mVideoUrl.isEmpty()) {
+            showErrorOverlay(false);
             Uri uri = Uri.parse(mVideoUrl);
             Timber.d("Vidurl URL: %s", uri.toString());
             // Prepare the MediaSource.
             MediaSource mediaSource = buildMediaSource(uri);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
+        } else {
+            showErrorOverlay(true);
         }
     }
 
@@ -192,6 +196,16 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
                 createMediaSource(uri);
     }
 
+    private void showErrorOverlay(boolean shouldShow) {
+        if (shouldShow) {
+            playerView.setVisibility(View.INVISIBLE);
+            videoImageOverlay.setVisibility(View.VISIBLE);
+            videoImageOverlay.setImageResource(R.drawable.ic_error_outline_black);
+        } else {
+            playerView.setVisibility(View.VISIBLE);
+            videoImageOverlay.setVisibility(View.INVISIBLE);
+        }
+    }
 
     private void initializeMediaSession(Context context) {
 
@@ -247,13 +261,9 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         if (error != null) {
-            releasePlayer();
-            playerView.setVisibility(View.INVISIBLE);
-            videoImageOverlay.setVisibility(View.VISIBLE);
-            videoImageOverlay.setImageResource(R.drawable.ic_error_outline_black);
+            showErrorOverlay(true);
         } else {
-            playerView.setVisibility(View.VISIBLE);
-            videoImageOverlay.setVisibility(View.INVISIBLE);
+            showErrorOverlay(false);
         }
     }
 
