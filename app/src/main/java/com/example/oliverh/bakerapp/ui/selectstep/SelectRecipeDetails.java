@@ -120,7 +120,7 @@ public class SelectRecipeDetails extends AppCompatActivity
 
         if (isTablet) {
             if (position == 0) {
-                handleDependentFragmentState(0);
+                showIngredients();
                 ViewIngredientsFragment viewIngredientsFragment = ViewIngredientsFragment.newInstance(recipeId);
 
                 getSupportFragmentManager().executePendingTransactions();
@@ -128,7 +128,6 @@ public class SelectRecipeDetails extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.tbl_recipeIngredientFrag, viewIngredientsFragment)
                         .commitNow();
-
 
             } else {
                 // Request for data given recipeId and stepId
@@ -154,7 +153,7 @@ public class SelectRecipeDetails extends AppCompatActivity
                         String recipeDescription = payload.getDescription();
 
                         Timber.d("Selected query result" + payload.toString());
-                        handleDependentFragmentState(1);
+                        showStepDetails();
                         handleTextPayload(recipeStepHeader, recipeDescription);
                         handleVideoUrl(payload.getVideoUrl());
                     }
@@ -179,18 +178,6 @@ public class SelectRecipeDetails extends AppCompatActivity
 
             Timber.d("Launch ViewRecipeStepHolder activity - recipeId: %d, stepId: %d, state: %d", recipeId, stepId, vsState);
             startActivity(intent);
-        }
-    }
-
-    private void handleDependentFragmentState(int state) {
-        switch (state) {
-            case 1:
-                showStepDetails();
-                break;
-
-            case 0:
-            default:
-                showIngredients();
         }
     }
 
