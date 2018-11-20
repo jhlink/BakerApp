@@ -11,6 +11,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.oliverh.bakerapp.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -53,6 +54,9 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     @Nullable
     PlayerView playerView;
 
+    @BindView(R.id.iv_playerOverlay)
+    ImageView videoImageOverlay;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -73,6 +77,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         if (getArguments() != null) {
             mVideoUrl = getArguments().getString(ARGS_VIDEO_URL);
 
@@ -80,38 +85,13 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         }
     }
 
-    //  See this link for explanation for SDK versioning
-    //      https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer(getContext());
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if ((Util.SDK_INT <= 23 || playerView == null)) {
-            initializePlayer(getContext());
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
-        mMediaSession.setActive(false);
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipe_video_view, container, false);
 
-        if (view instanceof PlayerView) {
-            ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
 
+        if (playerView != null) {
             initializeMediaSession(view.getContext());
             initializePlayer(view.getContext());
 
@@ -152,6 +132,31 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
             createAndSetMediaSource();
         }
+    }
+
+    //  See this link for explanation for SDK versioning
+    //      https://codelabs.developers.google.com/codelabs/exoplayer-intro/#2
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializePlayer(getContext());
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || playerView == null)) {
+            initializePlayer(getContext());
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+        mMediaSession.setActive(false);
     }
 
     @Override
@@ -225,7 +230,6 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
-
     }
 
     @Override
@@ -242,7 +246,15 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-
+        if (error != null) {
+            releasePlayer();
+            playerView.setVisibility(View.INVISIBLE);
+            videoImageOverlay.setVisibility(View.VISIBLE);
+            videoImageOverlay.setImageResource(R.drawable.ic_error_outline_black);
+        } else {
+            playerView.setVisibility(View.VISIBLE);
+            videoImageOverlay.setVisibility(View.INVISIBLE);
+        }
     }
 
     private class RecipeVideoSessionCallback extends MediaSessionCompat.Callback {
