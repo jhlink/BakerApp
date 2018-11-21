@@ -115,15 +115,20 @@ public class ViewRecipeStepTextFragment extends Fragment {
 
     private void setDescriptionData(String rawDescString) {
         if (rawDescString != null) {
-            Pattern p = Pattern.compile("\\d+\\.{1}\\s");
-            String[] m = p.split(rawDescString);
+            if (rawDescString.length() == 0) {
+                recipeStepDescription.setText(rawDescString);
+            } else {
+                Pattern p = Pattern.compile("\\d+\\.{1}\\s");
+                String[] m = p.split(rawDescString);
 
-            Timber.d("Header Regex Result - Tokens : %d", m.length);
-            for (String d : m) {
-                if (d.length() > 0) {
-                    Timber.d("%s", d);
-                    recipeStepDescription.setText(d);
+                Timber.d("Header Regex Result - Tokens : %d", m.length);
+                for (String d : m) {
+                    if (d.length() > 0) {
+                        Timber.d("%s", d);
+                        recipeStepDescription.setText(d);
+                    }
                 }
+
             }
         }
     }

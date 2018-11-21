@@ -120,11 +120,12 @@ public class SelectRecipeDetails extends AppCompatActivity
         String stepIdBundleTag = getString(R.string.BUNDLE_STEP_ID);
         String viewStepState = getString(R.string.BUNDLE_STEP_STATE);
 
-        if (!isNewPosition(position)) {
-            return;
-        }
 
         if (isTablet) {
+            if (!isNewPosition(position)) {
+                return;
+            }
+
             if (position == 0) {
                 showIngredients();
                 initializeIngredientsFragment();
@@ -140,6 +141,7 @@ public class SelectRecipeDetails extends AppCompatActivity
             if (position == 0) {
                 vsState = 0;
             } else {
+                stepId = position - 1;
                 vsState = 1;
             }
 
@@ -202,16 +204,15 @@ public class SelectRecipeDetails extends AppCompatActivity
 
                     RecipeStep payload = (RecipeStep) repositoryResponse.getObject();
 
-                    String recipeStepHeader = String.valueOf(payload.getStepIndex());//
+                    int recipeStepIndex = payload.getStepIndex();
                     String recipeDescription = payload.getDescription();
 
                     Timber.d("Selected query result : " + payload.toString());
                     showStepDetails();
-                    handleTextPayload(recipeStepHeader, recipeDescription);
+                    handleTextPayload(recipeStepIndex, recipeDescription);
                     handleVideoUrl(payload.getVideoUrl());
                 }
             });
-
         }
     }
 
@@ -258,9 +259,9 @@ public class SelectRecipeDetails extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-    private void handleTextPayload(String header, String desc) {
-        String nullSafeHeader = header == null ? "" : header;
-        String nullSafeDesc = desc == null ? "" : desc;
+    private void handleTextPayload(int stepIndex, String desc) {
+        String nullSafeHeader = stepIndex == 0 ? desc : String.valueOf(stepIndex);
+        String nullSafeDesc = desc == null || stepIndex == 0 ? "" : desc;
 
         Bundle bundle = new Bundle();
         bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_HEADER, nullSafeHeader);
