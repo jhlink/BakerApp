@@ -170,7 +170,6 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         if (mVideoUrl != null && !mVideoUrl.isEmpty()) {
             showErrorOverlay(false);
             Uri uri = Uri.parse(mVideoUrl);
-            Timber.d("Vidurl URL: %s", uri.toString());
             // Prepare the MediaSource.
             MediaSource mediaSource = buildMediaSource(uri);
             mExoPlayer.prepare(mediaSource);
@@ -188,6 +187,12 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         }
     }
 
+    public void haltPlayer() {
+        if (mExoPlayer != null) {
+            mExoPlayer.stop();
+        }
+    }
+
     private MediaSource buildMediaSource(Uri uri) {
         Timber.d("Video Url: %s", uri.toString());
 
@@ -198,6 +203,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
     private void showErrorOverlay(boolean shouldShow) {
         if (shouldShow) {
+            haltPlayer();
             playerView.setVisibility(View.INVISIBLE);
             videoImageOverlay.setVisibility(View.VISIBLE);
             videoImageOverlay.setImageResource(R.drawable.ic_error_outline_black);

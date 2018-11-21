@@ -177,8 +177,7 @@ public class SelectRecipeDetails extends AppCompatActivity
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.tbl_recipeIngredientFrag, viewIngredientsFragment)
-                .commitNow();
-
+                .commit();
     }
 
     private void initializeViewModel() {
@@ -240,13 +239,15 @@ public class SelectRecipeDetails extends AppCompatActivity
 
     private void showIngredients() {
         RecipeVideoFragment recipeVideoFragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_VIDEO_COLLECTION_CONTAINER_ID);
+
+        recipeVideoFragment.haltPlayer();
+
         ViewRecipeStepTextFragment recipeStepTextFragment = (ViewRecipeStepTextFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_STEP_TEXT_COLLECTION_CONTAINER_ID);
         ViewIngredientsFragment viewIngredientsFragment = (ViewIngredientsFragment) getSupportFragmentManager().findFragmentById(TABLET_RECIPE_INGREDIENT_COLLECTION_CONTAINER_ID);
 
         if (layout != null) {
             layout.setVisibility(View.VISIBLE);
         }
-
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction()
                 .hide(recipeVideoFragment)
