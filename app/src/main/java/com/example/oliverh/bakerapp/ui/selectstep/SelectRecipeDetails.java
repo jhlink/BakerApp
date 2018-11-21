@@ -180,6 +180,10 @@ public class SelectRecipeDetails extends AppCompatActivity
     }
 
     private void initializeViewModel() {
+
+        // If in Tablet mode, show Recipe Intro -> set stepId = 0;
+        stepId = 0;
+
         // Initialize view model or refresh recipe data.
         Timber.d("RecipeId: %d, StepId: %d", recipeId, stepId);
 
