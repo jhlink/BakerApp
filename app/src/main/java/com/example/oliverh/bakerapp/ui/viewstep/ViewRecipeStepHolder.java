@@ -78,9 +78,9 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
 
                 // Check if we're in landscape state
                 if (!landscape_videoFullScreen) {
-                    String recipeStepHeader = String.format("Step %d", recipeStep.getStepIndex());
+                    int recipeStepIndex = recipeStep.getStepIndex();
                     String recipeDescription = recipeStep.getDescription();
-                    handleTextPayload(recipeStepHeader, recipeDescription);
+                    handleTextPayload(recipeStepIndex, recipeDescription);
                 }
 
                 handleVideoUrl(recipeStep.getVideoUrl());
@@ -88,10 +88,9 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
         });
     }
 
-
-    private void handleTextPayload(String header, String desc) {
-        String nullSafeHeader = header == null ? "" : header;
-        String nullSafeDesc = desc == null ? "" : desc;
+    private void handleTextPayload(int stepIndex, String desc) {
+        String nullSafeHeader = stepIndex == 0 ? desc : String.valueOf(stepIndex);
+        String nullSafeDesc = desc == null || stepIndex == 0 ? "" : desc;
 
         Bundle bundle = new Bundle();
         bundle.putString(ViewRecipeStepTextFragment.ARG_STEP_HEADER, nullSafeHeader);

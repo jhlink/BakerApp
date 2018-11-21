@@ -40,7 +40,8 @@ public class SelectRecipeDetails extends AppCompatActivity
     private int recipeId;
     private boolean isTablet = false;
     private ViewRecipeStepViewModel viewRecipeStepViewModel;
-    private int stepId = 0;
+    private int stepId = -1;
+    private int positionTracker = -1;
 
     @BindView(LAND_RECIPE_DETAILS_COLLECTION_CONTAINER_ID)
     @Nullable
@@ -115,14 +116,13 @@ public class SelectRecipeDetails extends AppCompatActivity
 
     @Override
     public void onDetailInteractionListener(int position) {
-        if (stepId == (position - 1)) {
-            return;
-        } else {
-            stepId = position - 1;
-        }
         String recipeIdBundleTag = getString(R.string.BUNDLE_RECIPE_ID);
         String stepIdBundleTag = getString(R.string.BUNDLE_STEP_ID);
         String viewStepState = getString(R.string.BUNDLE_STEP_STATE);
+
+        if (!isNewPosition(position)) {
+            return;
+        }
 
         if (isTablet) {
             if (position == 0) {
@@ -152,6 +152,20 @@ public class SelectRecipeDetails extends AppCompatActivity
             Timber.d("Launch ViewRecipeStepHolder activity - recipeId: %d, stepId: %d, state: %d", recipeId, stepId, vsState);
             startActivity(intent);
         }
+    }
+
+    private boolean isNewPosition(int mStepId) {
+        boolean result = false;
+        if (positionTracker != mStepId) {
+            positionTracker = mStepId;
+
+            //  The reason why we're subtracting one is because the step index
+            //      does not mirror the order of the list supplied to the RecyclerViewAdapter.
+            stepId = mStepId - 1;
+            result = true;
+        }
+
+        return result;
     }
 
     private void initializeIngredientsFragment() {
@@ -184,10 +198,10 @@ public class SelectRecipeDetails extends AppCompatActivity
 
                     RecipeStep payload = (RecipeStep) repositoryResponse.getObject();
 
-                    String recipeStepHeader = String.format("Step %d", payload.getStepIndex() + 1);//
+                    String recipeStepHeader = String.valueOf(payload.getStepIndex());//
                     String recipeDescription = payload.getDescription();
 
-                    Timber.d("Selected query result" + payload.toString());
+                    Timber.d("Selected query result : " + payload.toString());
                     showStepDetails();
                     handleTextPayload(recipeStepHeader, recipeDescription);
                     handleVideoUrl(payload.getVideoUrl());

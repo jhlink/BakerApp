@@ -12,9 +12,12 @@ import android.widget.TextView;
 
 import com.example.oliverh.bakerapp.R;
 
+import java.util.regex.Pattern;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,19 +49,10 @@ public class ViewRecipeStepTextFragment extends Fragment {
     @Nullable
     Button nextStepBtn;
 
-
     public ViewRecipeStepTextFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param header Parameter 1.
-     * @param desc   Parameter 2.
-     * @return A new instance of fragment ViewRecipeStepTextFragment.
-     */
     public static ViewRecipeStepTextFragment newInstance(String header, String desc, boolean
             shouldHideBtn) {
         ViewRecipeStepTextFragment fragment = new ViewRecipeStepTextFragment();
@@ -86,8 +80,8 @@ public class ViewRecipeStepTextFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_recipe_step_text, container, false);
         ButterKnife.bind(this, view);
 
-        recipeStepHeader.setText(mHeader);
-        recipeStepDescription.setText(mDesc);
+        setHeaderData(mHeader);
+        setDescriptionData(mDesc);
         setNxtBtnVisibility(hideNextBtn);
 
         return view;
@@ -106,9 +100,31 @@ public class ViewRecipeStepTextFragment extends Fragment {
             mDesc = bundle.getString(ARG_STEP_DESC);
             hideNextBtn = bundle.getBoolean(ARG_IS_NEXT_BTN_VISIBLE);
 
-            recipeStepHeader.setText(mHeader);
-            recipeStepDescription.setText(mDesc);
+            setHeaderData(mHeader);
+            setDescriptionData(mDesc);
             setNxtBtnVisibility(hideNextBtn);
+        }
+    }
+
+    private void setHeaderData(String rawHeaderString) {
+        if (rawHeaderString != null) {
+            String formattedString = String.format("Step %s", rawHeaderString);
+            recipeStepHeader.setText(formattedString);
+        }
+    }
+
+    private void setDescriptionData(String rawDescString) {
+        if (rawDescString != null) {
+            Pattern p = Pattern.compile("\\d+\\.{1}\\s");
+            String[] m = p.split(rawDescString);
+
+            Timber.d("Header Regex Result - Tokens : %d", m.length);
+            for (String d : m) {
+                if (d.length() > 0) {
+                    Timber.d("%s", d);
+                    recipeStepDescription.setText(d);
+                }
+            }
         }
     }
 
