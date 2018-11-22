@@ -28,6 +28,7 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.isInte
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.IsNot.not;
 
 @RunWith(AndroidJUnit4.class)
@@ -90,5 +91,11 @@ public class ViewRecipeStepDetailsScreenTest_Mobile {
     @Test
     public void checkIfNextButtonExists() {
         onView(withId(R.id.btn_nextStep)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void checkIfRecipeStepHeaderTextLoads() {
+        String stepHeaderText = "Step 2";
+        onView(withId(R.id.tv_recipeStepHeader)).check(matches(withText(stepHeaderText)));
     }
 }
