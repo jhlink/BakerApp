@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.DisplayMetrics;
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -29,6 +31,7 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExt
 import static android.support.test.espresso.intent.matcher.IntentMatchers.isInternal;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withSubstring;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -93,6 +96,13 @@ public class SelectRecipeDetailsScreenTest {
         //  a recipe for Brownies and a constant, hardcoded string is used to validate
         //  that the Ingredients list is properly loaded.
         onView(withSubstring("unsalted butter")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void checkIfNextButtonDoesNotExistInTabletMode() {
+        if (isScreenWidth600dp()) {
+            onView(withId(R.id.btn_nextStep)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        }
     }
 
     @Test
