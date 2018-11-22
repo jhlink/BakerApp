@@ -92,8 +92,20 @@ public class RecipeIngredient {
     }
 
     public String toUIString() {
-        String compiled = String.format(Locale.ENGLISH, "%.2f %s, %s", quantity, measure, ingredient);
+        String processedUnitString = processUnits(quantity, measure);
+        String compiled = String.format(Locale.ENGLISH, "%s - %s", processedUnitString, ingredient);
         return compiled;
     }
 
+    private String processUnits(double mQuantity, String measurement) {
+        String result = String.format(Locale.ENGLISH, "%.0f %s", mQuantity, measurement);
+
+        if (measurement.equals("TBLSP") || measurement.equals("TSP")) {
+            result = String.format(Locale.ENGLISH, "%.2f %s", mQuantity, measurement);
+        } else if (measurement.equals("UNIT")) {
+            result = String.format(Locale.ENGLISH, "%.0f", mQuantity);
+        }
+
+        return result;
+    }
 }
