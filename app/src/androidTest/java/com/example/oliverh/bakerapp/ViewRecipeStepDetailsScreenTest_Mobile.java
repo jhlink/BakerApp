@@ -3,6 +3,7 @@ package com.example.oliverh.bakerapp;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -109,4 +111,22 @@ public class ViewRecipeStepDetailsScreenTest_Mobile {
         onView(withId(R.id.btn_nextStep)).perform(click());
         onView(withId(R.id.tv_recipeStepHeader)).check(matches(withText(nextStepHeaderText)));
     }
+
+    @Test
+    public void checkIfVideoPlayerIsFullScreenOnLandscape() {
+        checkIfVideoPlayerHasLoaded();
+        checkIfNextButtonExists();
+        checkIfRecipeStepHeaderTextLoads();
+
+        setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        onView(withId(R.id.recipePlayerView)).check(matches(isDisplayed()));
+        onView(withId(R.id.btn_nextStep)).check(doesNotExist());
+        onView(withId(R.id.tv_recipeStepHeader)).check(doesNotExist());
+    }
+
+    private void setActivityOrientation(int activityInfoConstant) {
+        mIntentRule.getActivity().setRequestedOrientation(activityInfoConstant);
+    }
+
 }
