@@ -5,12 +5,11 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-
+import android.support.annotation.NonNull;
 
 import com.example.oliverh.bakerapp.Constants;
 import com.squareup.moshi.Json;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -100,10 +99,10 @@ public class Recipe {
         this.steps = steps;
     }
 
+    @NonNull
     @Override
     public String toString() {
-        String content = String.format(Locale.ENGLISH, "Recipe Name: %s, ID: %d, Servings: %d, ImageUrl: %s", recipeName, id, servings, imageURL);
-        return content;
+        return String.format(Locale.ENGLISH, "Recipe Name: %s, ID: %d, Servings: %d, ImageUrl: %s", recipeName, id, servings, imageURL);
     }
 
     public void initalizeRecipeIdInRecipeSubtypes() {
