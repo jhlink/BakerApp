@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.oliverh.bakerapp.R;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -43,12 +44,17 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
     private static final String ARGS_VIDEO_URL = "RECIPE_VIDEO_URL";
     private static final String TAG = RecipeVideoFragment.class.getSimpleName();
+    private static final String ARGS_CURRENT_PLAYER_POSITION = "VIDEO_SEEK_POSITION";
+    private static final String ARGS_CURRENT_WINDOW_INDEX = "WINDOW_INDEX";
     private static MediaSessionCompat mMediaSession;
     private static final DefaultBandwidthMeter BANDWIDTH_METER =
             new DefaultBandwidthMeter();
     private PlaybackStateCompat.Builder mStateBuilder;
     private SimpleExoPlayer mExoPlayer;
+
     private String mVideoUrl;
+    private long mVideoSeekPosition;
+    private int mWindowIndex;
 
     @BindView(R.id.recipePlayerView)
     @Nullable
@@ -80,7 +86,16 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         if (getArguments() != null) {
             mVideoUrl = getArguments().getString(ARGS_VIDEO_URL);
 
-            Timber.d("Loading variables from savedInstanceState Bundle: V_URL - %s", mVideoUrl);
+            Timber.d("[VIDEO_SEEK] Loading variables from getArguments: V_URL - %s", mVideoUrl);
+        }
+
+        mVideoSeekPosition = C.TIME_UNSET;
+        if (savedInstanceState != null) {
+            mVideoUrl = savedInstanceState.getString(ARGS_VIDEO_URL);
+            mVideoSeekPosition = savedInstanceState.getLong(ARGS_CURRENT_PLAYER_POSITION, C.TIME_UNSET);
+            mWindowIndex = savedInstanceState.getInt(ARGS_CURRENT_WINDOW_INDEX, C.INDEX_UNSET);
+            Timber.d("[VIDEO_SEEK] Loading variables from savedInstanceState Bundle: V_URL - %s", mVideoUrl);
+            Timber.d("[VIDEO_SEEK] onCreate Position %d", mVideoSeekPosition);
         }
     }
 
@@ -90,13 +105,23 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
         ButterKnife.bind(this, view);
 
+        if (savedInstanceState != null) {
+            mVideoUrl = savedInstanceState.getString(ARGS_VIDEO_URL);
+            mVideoSeekPosition = savedInstanceState.getLong(ARGS_CURRENT_PLAYER_POSITION, C.TIME_UNSET);
+            Timber.d("[VIDEO_SEEK][onCreateView] Loading variables from savedInstanceState Bundle: V_URL - %s", mVideoUrl);
+            Timber.d("[VIDEO_SEEK][onCreateView] onCreate Position %d", mVideoSeekPosition);
+        }
+
+
         if (playerView != null) {
+
             initializeMediaSession(view.getContext());
             initializePlayer(view.getContext());
 
             if (mVideoUrl == null) {
                 Timber.d("No Video Exist ");
             }
+
         }
 
         return view;
@@ -104,7 +129,10 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
     public void setAndInitializePlayer(Bundle bundle) {
         if (bundle != null) {
-            mVideoUrl = bundle.getString(ARGS_VIDEO_URL);
+            if (!bundle.getString(ARGS_VIDEO_URL).equals(mVideoUrl)) {
+                mVideoSeekPosition = C.TIME_UNSET;
+                mVideoUrl = bundle.getString(ARGS_VIDEO_URL);
+            }
             createAndSetMediaSource();
         }
     }
@@ -131,6 +159,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
             mExoPlayer.addListener(this);
 
             createAndSetMediaSource();
+
         }
     }
 
@@ -140,7 +169,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            initializePlayer(getContext());
+            initializePlayer(this.getContext());
         }
     }
 
@@ -148,31 +177,53 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     public void onResume() {
         super.onResume();
         if ((Util.SDK_INT <= 23 || playerView == null)) {
-            initializePlayer(getContext());
+            initializePlayer(this.getContext());
         }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         releasePlayer();
-        mMediaSession.setActive(false);
+        Timber.d("[VIDEO_SEEK] On Pause Position : %d ", mVideoSeekPosition);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releasePlayer();
+        Timber.d("[VIDEO_SEEK] On Stop Position : %d ", mVideoSeekPosition);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(ARGS_VIDEO_URL, mVideoUrl);
+        outState.putLong(ARGS_CURRENT_PLAYER_POSITION, mVideoSeekPosition);
+        outState.putInt(ARGS_CURRENT_WINDOW_INDEX, mWindowIndex);
+        Timber.d("[VIDEO_SEEK] Saving state : %d ", mVideoSeekPosition);
+
         super.onSaveInstanceState(outState);
     }
 
     private void createAndSetMediaSource() {
-        Timber.d("Result of mVideoUrl - " + mVideoUrl);
         if (mVideoUrl != null && !mVideoUrl.isEmpty()) {
+
+
             showErrorOverlay(false);
             Uri uri = Uri.parse(mVideoUrl);
             // Prepare the MediaSource.
             MediaSource mediaSource = buildMediaSource(uri);
+
             mExoPlayer.prepare(mediaSource);
+
+            if (mVideoSeekPosition != C.TIME_UNSET) {
+                Timber.d("[VIDEO_SEEK] Seek %d", mVideoSeekPosition);
+                mExoPlayer.seekTo(mVideoSeekPosition);
+            } else {
+                Timber.d("[VIDEO_SEEK] Unseek");
+            }
+
+
             mExoPlayer.setPlayWhenReady(true);
         } else {
             showErrorOverlay(true);
@@ -181,9 +232,12 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
     private void releasePlayer() {
         if (mExoPlayer != null) {
+            mVideoSeekPosition = mExoPlayer.getCurrentPosition();
+            mWindowIndex = mExoPlayer.getCurrentWindowIndex();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
+            mMediaSession.setActive(false);
         }
     }
 

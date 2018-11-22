@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fullViewContainer"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-    <fragment
-        android:id="@+id/full_video_view_screen"
+    <FrameLayout
+        android:id="@+id/recipePlayerViewFragment"
         android:name="com.example.oliverh.bakerapp.ui.viewstep.RecipeVideoFragment"
         android:keepScreenOn="true"
         android:layout_height="match_parent"

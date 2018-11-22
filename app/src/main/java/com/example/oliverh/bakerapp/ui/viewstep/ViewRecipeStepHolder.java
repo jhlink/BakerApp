@@ -16,7 +16,7 @@ import timber.log.Timber;
 
 public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecipeStepTextFragment.OnFragmentInteractionListener {
 
-    private static final int FULLSCREEN_CONTAINER_ID = R.id.full_video_view_screen;
+    private static final int FULLSCREEN_CONTAINER_ID = R.id.fullViewContainer;
     private static final int VIEW_RECIPE_STEP_INGREDIENTS = 0;
     private static final int VIEW_RECIPE_STEP_DETAILS = 1;
 
@@ -62,30 +62,36 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
         //  Query if orientation = landscape
         landscape_videoFullScreen = findViewById(FULLSCREEN_CONTAINER_ID) != null;
 
-        //  Initialize ViewModel members
-        ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
-        mViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
+        if (mViewModel == null) {
+            //  Initialize ViewModel members
+            Timber.d("Initialize View Model");
+            ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
+            mViewModel = ViewModelProviders.of(this, factory).get(ViewRecipeStepViewModel.class);
 
-        mViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
-            @Override
-            public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
-                if (repositoryResponse.getError() != null) {
-                    Timber.d(repositoryResponse.getError());
-                    return;
+            mViewModel.getRecipeStep().observe(this, new Observer<RepositoryResponse>() {
+                @Override
+                public void onChanged(@Nullable RepositoryResponse repositoryResponse) {
+                    if (repositoryResponse.getError() != null) {
+                        Timber.d(repositoryResponse.getError());
+                        return;
+                    }
+
+                    RecipeStep recipeStep = (RecipeStep) repositoryResponse.getObject();
+                    Timber.d("Selected Recipe Step %s", recipeStep.toString());
+
+                    // Check if we're in landscape state
+                    if (!landscape_videoFullScreen) {
+                        int recipeStepIndex = recipeStep.getStepIndex();
+                        String recipeDescription = recipeStep.getDescription();
+                        handleTextPayload(recipeStepIndex, recipeDescription);
+                    }
+
+                    handleVideoUrl(recipeStep.getVideoUrl());
                 }
-
-                RecipeStep recipeStep = (RecipeStep) repositoryResponse.getObject();
-
-                // Check if we're in landscape state
-                if (!landscape_videoFullScreen) {
-                    int recipeStepIndex = recipeStep.getStepIndex();
-                    String recipeDescription = recipeStep.getDescription();
-                    handleTextPayload(recipeStepIndex, recipeDescription);
-                }
-
-                handleVideoUrl(recipeStep.getVideoUrl());
-            }
-        });
+            });
+        } else {
+            Timber.d("View Model already established");
+        }
     }
 
     private void handleTextPayload(int stepIndex, String desc) {
@@ -101,21 +107,27 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
         fragment.updateFragmentUI(bundle);
     }
 
-
     private void handleVideoUrl(String url) {
         // Check if videoUrl is null
         if (url != null) {
-            RecipeVideoFragment fragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(R.id.recipePlayerViewFragment);
+            int containerId = R.id.recipePlayerViewFragment;
+            RecipeVideoFragment fragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(containerId);
 
             if (landscape_videoFullScreen) {
-                fragment = (RecipeVideoFragment) getSupportFragmentManager().findFragmentById(FULLSCREEN_CONTAINER_ID);
                 hide();
+            } else if (fragment == null) {
+                fragment = RecipeVideoFragment.newInstance(url);
+                Timber.d("New Fragment w/ %s", url);
+            } else {
+                Timber.d("Found Portrait Fragment");
+                Bundle bundle = new Bundle();
+                bundle.putString(getString(R.string.VIDEO_FRAG_ARGS), url);
+                fragment.setAndInitializePlayer(bundle);
             }
 
-            Bundle bundle = new Bundle();
-            bundle.putString(getString(R.string.VIDEO_FRAG_ARGS), url);
-            fragment.setArguments(bundle);
-            fragment.setAndInitializePlayer(bundle);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(containerId, fragment)
+                    .commit();
         }
     }
 
@@ -142,5 +154,19 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
     public void OnNextStepFragmentInteraction() {
         stepId++;
         mViewModel.queryRecipe(recipeId, stepId);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(getString(R.string.BUNDLE_STEP_ID), stepId);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            stepId = savedInstanceState.getInt(getString(R.string.BUNDLE_STEP_ID), 0);
+        }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }
