@@ -87,5 +87,8 @@ public class ViewRecipeStepDetailsScreenTest_Mobile {
         onView(withId(R.id.recipePlayerView)).check(matches(isDisplayed()));
     }
 
-
+    @Test
+    public void checkIfNextButtonExists() {
+        onView(withId(R.id.btn_nextStep)).check(matches(isDisplayed()));
+    }
 }
