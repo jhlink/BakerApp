@@ -46,6 +46,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     private static final String TAG = RecipeVideoFragment.class.getSimpleName();
     private static final String ARGS_CURRENT_PLAYER_POSITION = "VIDEO_SEEK_POSITION";
     private static final String ARGS_CURRENT_WINDOW_INDEX = "WINDOW_INDEX";
+    private static final String ARGS_VIDEO_PLAY_STATE = "VIDEO_PLAY_STATE";
     private static MediaSessionCompat mMediaSession;
     private static final DefaultBandwidthMeter BANDWIDTH_METER =
             new DefaultBandwidthMeter();
@@ -55,6 +56,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     private String mVideoUrl;
     private long mVideoSeekPosition;
     private int mWindowIndex;
+    private boolean mVideoPlayState;
 
     @BindView(R.id.recipePlayerView)
     @Nullable
@@ -85,8 +87,6 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
 
         if (getArguments() != null) {
             mVideoUrl = getArguments().getString(ARGS_VIDEO_URL);
-
-            Timber.d("[VIDEO_SEEK] Loading variables from getArguments: V_URL - %s", mVideoUrl);
         }
 
         mVideoSeekPosition = C.TIME_UNSET;
@@ -94,6 +94,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
             mVideoUrl = savedInstanceState.getString(ARGS_VIDEO_URL);
             mVideoSeekPosition = savedInstanceState.getLong(ARGS_CURRENT_PLAYER_POSITION, C.TIME_UNSET);
             mWindowIndex = savedInstanceState.getInt(ARGS_CURRENT_WINDOW_INDEX, C.INDEX_UNSET);
+            mVideoPlayState = savedInstanceState.getBoolean(ARGS_VIDEO_PLAY_STATE, false);
             Timber.d("[VIDEO_SEEK] Loading variables from savedInstanceState Bundle: V_URL - %s", mVideoUrl);
             Timber.d("[VIDEO_SEEK] onCreate Position %d", mVideoSeekPosition);
         }
@@ -104,14 +105,6 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         View view = inflater.inflate(R.layout.fragment_recipe_video_view, container, false);
 
         ButterKnife.bind(this, view);
-
-        if (savedInstanceState != null) {
-            mVideoUrl = savedInstanceState.getString(ARGS_VIDEO_URL);
-            mVideoSeekPosition = savedInstanceState.getLong(ARGS_CURRENT_PLAYER_POSITION, C.TIME_UNSET);
-            Timber.d("[VIDEO_SEEK][onCreateView] Loading variables from savedInstanceState Bundle: V_URL - %s", mVideoUrl);
-            Timber.d("[VIDEO_SEEK][onCreateView] onCreate Position %d", mVideoSeekPosition);
-        }
-
 
         if (playerView != null) {
 
@@ -131,6 +124,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         if (bundle != null) {
             if (!bundle.getString(ARGS_VIDEO_URL).equals(mVideoUrl)) {
                 mVideoSeekPosition = C.TIME_UNSET;
+                mVideoPlayState = false;
                 mVideoUrl = bundle.getString(ARGS_VIDEO_URL);
             }
             createAndSetMediaSource();
@@ -187,7 +181,6 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         if ((Util.SDK_INT <= 23 || playerView == null)) {
             releasePlayer();
         }
-        Timber.d("[VIDEO_SEEK] On Pause Position : %d ", mVideoSeekPosition);
     }
 
     @Override
@@ -196,13 +189,13 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
-        Timber.d("[VIDEO_SEEK] On Stop Position : %d ", mVideoSeekPosition);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(ARGS_VIDEO_URL, mVideoUrl);
         outState.putLong(ARGS_CURRENT_PLAYER_POSITION, mVideoSeekPosition);
+        outState.putBoolean(ARGS_VIDEO_PLAY_STATE, mVideoPlayState);
         outState.putInt(ARGS_CURRENT_WINDOW_INDEX, mWindowIndex);
         Timber.d("[VIDEO_SEEK] Saving state : %d ", mVideoSeekPosition);
 
@@ -223,6 +216,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
             if (mVideoSeekPosition != C.TIME_UNSET) {
                 Timber.d("[VIDEO_SEEK] Seek %d", mVideoSeekPosition);
                 mExoPlayer.seekTo(mVideoSeekPosition);
+                mExoPlayer.setPlayWhenReady(mVideoPlayState);
             } else {
                 Timber.d("[VIDEO_SEEK] Unseek");
             }
@@ -238,6 +232,7 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
         if (mExoPlayer != null) {
             mVideoSeekPosition = mExoPlayer.getCurrentPosition();
             mWindowIndex = mExoPlayer.getCurrentWindowIndex();
+            mVideoPlayState = mExoPlayer.getPlayWhenReady();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
