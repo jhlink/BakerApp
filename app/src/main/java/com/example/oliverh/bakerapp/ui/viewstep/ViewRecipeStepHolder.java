@@ -26,6 +26,7 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
     private int stepId;
     private int vsState;
     private boolean isTablet;
+    private int tempStartingStepId = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +64,12 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
         landscape_videoFullScreen = findViewById(FULLSCREEN_CONTAINER_ID) != null;
 
         if (mViewModel == null) {
+
+            if (tempStartingStepId == -1) {
+                tempStartingStepId = stepId;
+                Timber.d("Temporarily stored step ID, %d", tempStartingStepId);
+            }
+
             //  Initialize ViewModel members
             Timber.d("Initialize View Model");
             ViewRecipeStepViewModelFactory factory = new ViewRecipeStepViewModelFactory(recipeId, stepId);
@@ -148,6 +155,16 @@ public class ViewRecipeStepHolder extends AppCompatActivity implements ViewRecip
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (stepId > tempStartingStepId) {
+            stepId--;
+            mViewModel.queryRecipe(recipeId, stepId);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
