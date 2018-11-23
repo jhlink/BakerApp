@@ -184,14 +184,18 @@ public class RecipeVideoFragment extends Fragment implements Player.EventListene
     @Override
     public void onPause() {
         super.onPause();
-        releasePlayer();
+        if ((Util.SDK_INT <= 23 || playerView == null)) {
+            releasePlayer();
+        }
         Timber.d("[VIDEO_SEEK] On Pause Position : %d ", mVideoSeekPosition);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        releasePlayer();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
         Timber.d("[VIDEO_SEEK] On Stop Position : %d ", mVideoSeekPosition);
     }
 
