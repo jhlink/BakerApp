@@ -1,4 +1,12 @@
-## Notes
+## Notes ##
+### Submission #2 Notes ###
+Per submission #1 revision requests, the following fixes have been made.
+- Fix: VideoPlayBack state is passed in onSaveInstanceState and properly set
+- Fix: API check has been added in onPause / onStop for VideoPlayer fragment
+- Fix: Back navigation now includes individual RecipeSteps. 
+User flow is now ( Select Recipe ) -> ( Select Recipe Step ) -> ( View Recipe Step )-n, where n is an ID of a new recipe step to be show.
+
+### Submission #1 Notes ###
 - Within the UI, network request status updates aren't handled precisely. 
 Specifically, the user may open the app, and very briefly notice the "network failed" screen. 
 This is probably due to the ViewModel LiveData not being updated frequently enough. 
